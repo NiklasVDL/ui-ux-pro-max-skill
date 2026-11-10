@@ -238,27 +238,27 @@ const trailerSrc = heroDatei
 
   <!-- ============ Gruppenlogos ============ -->
   <section class="kurve kurve--nacht bild-zaun logos" aria-labelledby="logos-titel">
-    <div class="wrap">
-      <div class="kopf">
+    <div class="wrap logos__raster">
+      <div class="logos__text">
         <h2 id="logos-titel">{logos.data.titel}</h2>
         <p class="spruchband logos__band">{logos.data.untertitel}</p>
+        <p class="logos__teaser">{logos.data.teaser}</p>
+        <a class="aktion" href="/geschichte/gruppenlogos/">Weiterlesen <Icon name="arrow-right" /></a>
       </div>
-      <ul class="logoreihe">
-        <li>
-          <img src="/images/logos/gruendungslogo.webp" alt="" loading="lazy" width="900" height="900" />
+      <ul class="aufkleber" aria-label="Unsere Gruppenlogos">
+        <li class="aufkleber__eins">
+          <img src="/images/logos/gruendungslogo.webp" alt="Gründungslogo: Osnabrücker Rad im lila Ring, INFERNO OSNABRÜCK · ULTRA' JUGEND" loading="lazy" width="900" height="900" />
           <span>Gründungslogo</span>
         </li>
-        <li>
-          <img src="/images/logos/fuenf-jahres-emblem.webp" alt="" loading="lazy" width="900" height="873" />
+        <li class="aufkleber__zwei">
+          <img src="/images/logos/fuenf-jahres-emblem.webp" alt="Fünf-Jahres-Emblem: Mann mit Bierkrug im Lorbeerkranz" loading="lazy" width="900" height="873" />
           <span>Fünf-Jahres-Emblem</span>
         </li>
-        <li>
-          <img src="/images/logos/arminius.webp" alt="" loading="lazy" width="150" height="146" />
+        <li class="aufkleber__drei">
+          <img src="/images/logos/arminius.webp" alt="Zweites Gruppenlogo: Arminius im Lorbeerkranz" loading="lazy" width="150" height="146" />
           <span>Arminius</span>
         </li>
       </ul>
-      <p class="logos__text">{logos.data.teaser}</p>
-      <a class="mehr" href="/geschichte/gruppenlogos/">Mehr als nur Zeichen <Icon name="arrow-right" /></a>
     </div>
   </section>
 
@@ -268,7 +268,6 @@ const trailerSrc = heroDatei
       <div class="geschichte__kopf">
         <div class="kopf">
           <h2 id="geschichte-titel">Geschichte</h2>
-          <p>{seite('15-jahre').data.teaser}</p>
         </div>
         <img
           class="geschichte__bild"
@@ -778,56 +777,80 @@ const trailerSrc = heroDatei
   }
 
   /* ---------- Logos ---------- */
-  .logos__band {
-    font-size: clamp(1.2rem, 0.9rem + 1.3vw, 2rem);
-    justify-self: start;
-    margin: 0;
-  }
-  .logoreihe {
-    list-style: none;
-    margin: 0 0 2.5rem;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(1.5rem, 5vw, 4rem);
-    align-items: end;
-  }
-  .logoreihe li {
+  .logos__raster {
     display: grid;
-    gap: 0.8rem;
-    justify-items: center;
-  }
-  .logoreihe img {
-    height: clamp(7rem, 14vw, 10.5rem);
-    width: auto;
-    padding: 0.45rem;
-    background: var(--weiss);
-    box-shadow: 0 1rem 2rem -0.8rem rgb(0 0 0 / 0.75);
-    transform: rotate(-3deg);
-    transition: transform 0.5s var(--ease-out);
-  }
-  .logoreihe li:nth-child(2) img {
-    transform: rotate(2.5deg);
-  }
-  .logoreihe li:nth-child(3) img {
-    transform: rotate(-1.5deg);
-  }
-  .logoreihe li:hover img {
-    transform: rotate(0deg) scale(1.04);
-  }
-  .logoreihe li:first-child img {
-    border-radius: 50%;
-    padding: 0;
-  }
-  .logoreihe span {
-    font-family: var(--display);
-    text-transform: uppercase;
-    font-size: 1.1rem;
-    color: var(--lila-licht);
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: center;
   }
   .logos__text {
-    max-width: var(--mass);
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
+  }
+  .logos__band {
+    font-size: clamp(1.2rem, 0.9rem + 1.3vw, 2rem);
+    margin: 0;
+  }
+  .logos__teaser {
+    margin: 0;
+    max-width: 58ch;
     color: var(--leise);
+  }
+  /* Drei Aufkleber, geklebt wie am Laternenpfahl: gleiche Montur, leicht verdreht, überlappend */
+  .aufkleber {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    min-height: clamp(22rem, 36vw, 32rem);
+  }
+  .aufkleber li {
+    position: absolute;
+    display: grid;
+    gap: 0.6rem;
+    justify-items: center;
+    transition: transform 0.6s var(--ease-out);
+  }
+  .aufkleber img {
+    width: 100%;
+    height: auto;
+    padding: clamp(0.4rem, 0.8vw, 0.7rem);
+    background: var(--weiss);
+    box-shadow: 0 1.4rem 2.6rem -1rem rgb(0 0 0 / 0.8);
+  }
+  .aufkleber span {
+    padding: 0.15rem 0.55rem 0.05rem;
+    background: var(--lila);
+    color: var(--weiss);
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: clamp(0.95rem, 0.8rem + 0.4vw, 1.2rem);
+  }
+  .aufkleber__eins {
+    width: clamp(12rem, 22vw, 19rem);
+    left: 0;
+    top: 6%;
+    transform: rotate(-5deg);
+    z-index: 2;
+  }
+  .aufkleber__zwei {
+    width: clamp(10rem, 17vw, 15rem);
+    right: 2%;
+    top: 0;
+    transform: rotate(4deg);
+    z-index: 1;
+  }
+  .aufkleber__drei {
+    width: clamp(7.5rem, 11vw, 10rem);
+    right: 18%;
+    bottom: 0;
+    transform: rotate(-2deg);
+    z-index: 3;
+  }
+  .aufkleber li:hover {
+    transform: rotate(0deg) scale(1.04);
+    z-index: 4;
   }
 
   /* ---------- Geschichte ---------- */
@@ -1011,7 +1034,8 @@ const trailerSrc = heroDatei
     .wir__raster,
     .kontakt__raster,
     .trailer__raster,
-    .geschichte__kopf {
+    .geschichte__kopf,
+    .logos__raster {
       grid-template-columns: 1fr;
     }
     .zeitleiste {

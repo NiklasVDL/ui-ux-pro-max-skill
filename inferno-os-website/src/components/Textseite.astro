@@ -21,13 +21,15 @@ const { bild = 'block', flaeche = 'weiss' } = Astro.props;
     display: grid;
     gap: clamp(2rem, 4vw, 3rem);
   }
+  /* Das Blatt ist selbst ein Kurvenbild: vier weiß getönte Motive untereinander,
+     nahtlos wiederholt (scripts/make-blatt.mjs). Kein Text steht auf schlichtem Weiß. */
   .blatt {
     --akzent: var(--lila);
     --leise: var(--tinte-2);
     justify-self: center;
     width: min(100%, 52rem);
     padding: clamp(1.5rem, 5vw, 4rem);
-    background: var(--weiss);
+    background: var(--weiss) url('/images/kurve/blatt-weiss.webp') center top / 100% auto repeat-y;
     color: var(--tinte);
     box-shadow: 0 2rem 4rem -2rem rgb(10 8 11 / 0.55);
     color-scheme: light;

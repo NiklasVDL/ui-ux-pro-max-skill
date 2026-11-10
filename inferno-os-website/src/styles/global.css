@@ -375,6 +375,26 @@ p {
   margin-bottom: 0.4em;
 }
 
+/* Abschlusszeilen („Verschwende deine Jugend!“) als Spruchband */
+.lesetext > p:has(> strong:only-child) {
+  margin: 0.4em 0;
+}
+.lesetext > p:has(> strong:only-child) > strong {
+  display: inline-block;
+  padding: 0.2em 0.6em 0.12em;
+  background: var(--lila);
+  color: var(--weiss);
+  font-family: var(--display);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 1.1;
+  transform: rotate(-1.5deg);
+}
+.lesetext > p:has(> strong:only-child):last-child > strong {
+  font-size: 1.35em;
+  transform: rotate(-2.5deg);
+}
+
 /* Bewegung nur, wenn erwünscht */
 @media (prefers-reduced-motion: reduce) {
   *,
