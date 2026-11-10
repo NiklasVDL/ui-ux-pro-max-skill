@@ -1,0 +1,147 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Seitenkopf from '../../../components/Seitenkopf.astro';
+import Icon from '../../../components/Icon.astro';
+import { saisons, saisonLang, galerieUrl, thumb } from '../../../lib/inhalte';
+
+export async function getStaticPaths() {
+  const liste = await saisons();
+  return liste.map((s, i) => ({
+    params: { saison: s.slug },
+    props: { s, neuer: liste[i - 1], aelter: liste[i + 1] },
+  }));
+}
+const { s, neuer, aelter } = Astro.props;
+---
+
+<Base titel={`Saison ${saisonLang(s.saison)}`} beschreibung={`Spieltagsbilder der Saison ${saisonLang(s.saison)} vom INFERNO Osnabrück.`}>
+  <Seitenkopf
+    titel={`Saison ${s.saison}`}
+    bild="choreo"
+    text={s.galerien.length ? `${s.galerien.length} Galerien · ${s.bilder} Bilder` : undefined}
+  >
+    <nav class="blaettern" aria-label="Saisons">
+      {neuer && <a class="mehr" href={`/spieltagsbilder/${neuer.slug}/`}><Icon name="arrow-left" /> {neuer.saison}</a>}
+      <a class="mehr" href="/spieltagsbilder/">Alle Saisons</a>
+      {aelter && <a class="mehr" href={`/spieltagsbilder/${aelter.slug}/`}>{aelter.saison} <Icon name="arrow-right" /></a>}
+    </nav>
+  </Seitenkopf>
+
+  <section class="kurve kurve--weiss bild-fahnen">
+    <div class="wrap">
+      {
+        s.galerien.length ? (
+          <ol class="spieltage">
+            {s.galerien.map((g) => (
+              <li class="spieltag">
+                <h2 class="spieltag__titel">
+                  <a href={galerieUrl(g)}>{g.data.titel}</a>
+                </h2>
+                <a class="spieltag__streifen" href={galerieUrl(g)} tabindex="-1" aria-hidden="true">
+                  {g.data.bilder.slice(0, 4).map((src) => (
+                    <img src={thumb(src)} alt="" loading="lazy" decoding="async" width="720" height="480" />
+                  ))}
+                  <span class="spieltag__zahl">
+                    <Icon name="images" /> {g.data.bilder.length}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <div class="folgt">
+            <p class="spruchband folgt__band">Bilder folgen</p>
+            <p>{s.hinweis ?? 'Für diese Saison sind noch keine Bilder online.'}</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .blaettern {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem 2rem;
+    margin-top: 0.5rem;
+  }
+  .spieltage {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+  .spieltag {
+    display: grid;
+    gap: 1rem;
+  }
+  .spieltag__titel {
+    font-size: clamp(1.3rem, 1rem + 1.2vw, 2.1rem);
+    line-height: 1.05;
+    color: var(--lila);
+  }
+  .spieltag__titel a {
+    text-decoration: none;
+  }
+  .spieltag__titel a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+  }
+  .spieltag__streifen {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+  .spieltag__streifen img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    background: var(--lila-tief);
+    transition:
+      transform 0.6s var(--ease-out),
+      filter 0.5s var(--ease-out);
+  }
+  .spieltag__streifen:hover img {
+    filter: saturate(1.2) contrast(1.05);
+  }
+  .spieltag__streifen:hover img:nth-child(odd) {
+    transform: rotate(-1.2deg) scale(1.02);
+  }
+  .spieltag__streifen:hover img:nth-child(even) {
+    transform: rotate(1.2deg) scale(1.02);
+  }
+  .spieltag__zahl {
+    position: absolute;
+    right: 0.6rem;
+    bottom: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.6rem 0.2rem;
+    background: var(--weiss);
+    color: var(--lila);
+    font-family: var(--display);
+    font-size: 1.1rem;
+  }
+  .spieltag__zahl :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .folgt {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+  }
+  .folgt__band {
+    font-size: clamp(2rem, 1.4rem + 3vw, 3.6rem);
+    margin: 0;
+  }
+  @media (max-width: 640px) {
+    .spieltag__streifen {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

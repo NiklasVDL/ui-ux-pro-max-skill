@@ -1,0 +1,1126 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Rad from '../components/Rad.astro';
+import Laufband from '../components/Laufband.astro';
+import VideoEmbed from '../components/VideoEmbed.astro';
+import SaisonWand from '../components/SaisonWand.astro';
+import {
+  aktuelles,
+  datum,
+  einstellungen,
+  galerieUrl,
+  letzterSpieltag,
+  saisonLang,
+  saisons,
+  seiten,
+  termin,
+  thumb,
+  trailer,
+} from '../lib/inhalte';
+import links from '../data/links.json';
+
+const letzter = await letzterSpieltag();
+const beitraege = (await aktuelles()).slice(0, 3);
+const saisonListe = await saisons();
+const alleSeiten = await seiten();
+const seite = (id: string) => alleSeiten.find((s) => s.id === id)!;
+const werWirSind = seite('wer-wir-sind');
+const logos = seite('gruppenlogos');
+const stationen = ['5-jahre', '10-jahre', '15-jahre', '20-jahre'].map(seite);
+const videos = await trailer();
+const kontakt = seite('kontakt');
+
+const galerienGesamt = saisonListe.reduce((n, s) => n + s.galerien.length, 0);
+const bilderGesamt = saisonListe.reduce((n, s) => n + s.bilder, 0);
+const zahl = new Intl.NumberFormat('de-DE');
+
+/** Erster Satz bzw. die ersten Sätze eines wortgetreuen Textes, ohne ihn umzuschreiben. */
+const anriss = (text: string, mindestens = 140) => {
+  const teile = text.match(/[^.!?]+[.!?]+["“]?(?=\s|$)\s*/g) ?? [text];
+  let aus = '';
+  for (const t of teile) {
+    aus += t;
+    if (aus.length >= mindestens) break;
+  }
+  return aus.trim();
+};
+const vorschau = (text: string) => text.replace(/\s+/g, ' ').replace(/[*_#>]/g, '').trim();
+
+const heroVideo = einstellungen.heroVideo as { anbieter: string; videoId: string; titel: string; datei?: string };
+const heroDatei = heroVideo.anbieter === 'datei' && heroVideo.datei ? heroVideo.datei : undefined;
+const heroSrc =
+  heroVideo.anbieter === 'youtube'
+    ? `https://www.youtube-nocookie.com/embed/${heroVideo.videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${heroVideo.videoId}&playsinline=1&rel=0&modestbranding=1`
+    : `https://player.vimeo.com/video/${heroVideo.videoId}?background=1&dnt=1&quality=720p`;
+const trailerSrc = heroDatei
+  ? heroDatei
+  : heroVideo.anbieter === 'youtube'
+    ? `https://www.youtube-nocookie.com/embed/${heroVideo.videoId}?autoplay=1&rel=0`
+    : `https://player.vimeo.com/video/${heroVideo.videoId}?autoplay=1&dnt=1&title=0&byline=0&portrait=0&color=883893`;
+---
+
+<Base kopf="hero">
+  <!-- ============ Trailer im Hintergrund ============ -->
+  <section class="hero" aria-labelledby="hero-titel">
+    <div class="hero__medien" aria-hidden="true">
+      <img class="hero__poster" src={einstellungen.heroBild} alt="" width="1920" height="1080" fetchpriority="high" />
+      {
+        heroDatei ? (
+          <video class="hero__video hero__datei" data-hero-datei src={heroDatei} poster={einstellungen.heroBild} muted loop playsinline preload="none" />
+        ) : (
+          <div class="hero__video" data-hero-video data-src={heroSrc} />
+        )
+      }
+      <div class="hero__toenung"></div>
+    </div>
+
+    <div class="hero__leiste">
+      <img class="hero__logo" src="/images/logos/gruendungslogo.webp" alt="Gründungslogo INFERNO Osnabrück Ultra' Jugend" width="96" height="96" />
+      <button class="hero__menue" type="button" data-menue-auf aria-haspopup="dialog">
+        <Icon name="menu" />
+        <span>Menü</span>
+      </button>
+    </div>
+
+    <div class="hero__inhalt">
+      <h1 class="hero__titel" id="hero-titel">
+        <span class="hero__zeile hero__zeile--1">Inferno</span>
+        <span class="hero__zeile hero__zeile--2">Osnabrück</span>
+      </h1>
+      <p class="spruchband hero__spruch">{einstellungen.heroSpruch}</p>
+      <div class="hero__aktionen">
+        <button class="aktion" type="button" data-trailer-auf>
+          <Icon name="volume-2" />
+          Trailer mit Ton
+        </button>
+        <a class="aktion aktion--hohl" href="/spieltagsbilder/">
+          <Icon name="images" />
+          Spieltagsbilder
+        </a>
+      </div>
+    </div>
+
+    <a class="hero__runter" href="#letzter-spieltag" aria-label="Weiter nach unten">
+      <Icon name="chevron-down" />
+    </a>
+    <div class="hero__marke" data-hero-ende></div>
+  </section>
+
+  <dialog class="trailer-dialog" data-trailer aria-label={heroVideo.titel}>
+    <button class="trailer-dialog__zu" type="button" data-trailer-zu aria-label="Trailer schließen"><Icon name="x" /></button>
+    <div class="trailer-dialog__rahmen" data-trailer-rahmen data-src={trailerSrc} data-titel={heroVideo.titel} data-datei={heroDatei ? 'ja' : undefined}></div>
+    <p class="trailer-dialog__titel">{heroVideo.titel}</p>
+  </dialog>
+
+  <Laufband variante="weiss" />
+
+  <!-- ============ Letzter Spieltag ============ -->
+  {
+    letzter && (
+      <section class="kurve kurve--lila bild-choreo letzter" id="letzter-spieltag" aria-labelledby="letzter-titel">
+        <div class="wrap">
+          <div class="letzter__kopf">
+            <h2 id="letzter-titel">Letzter Spieltag</h2>
+            <p class="spruchband letzter__band">{letzter.data.titel}</p>
+          </div>
+          <div class="mosaik" data-galerie={letzter.data.titel}>
+            {letzter.data.bilder.map((src, i) => (
+              <a href={src} data-bild class:list={['mosaik__bild', { 'mosaik__bild--gross': i === 0, 'mosaik__bild--mehr': i > 4 }]}>
+                <img
+                  src={i === 0 ? src : thumb(src)}
+                  alt={`Bild ${i + 1} vom ${letzter.data.titel}`}
+                  loading="lazy"
+                  decoding="async"
+                  width="1600"
+                  height="1067"
+                />
+              </a>
+            ))}
+          </div>
+          <div class="letzter__fuss">
+            <a class="aktion" href={galerieUrl(letzter)}>
+              Alle {letzter.data.bilder.length} Bilder
+              <Icon name="arrow-right" />
+            </a>
+            <a class="mehr" href={`/spieltagsbilder/${saisonListe.find((s) => s.saison === letzter.data.saison)?.slug}/`}>
+              Saison {saisonLang(letzter.data.saison)}
+              <Icon name="arrow-right" />
+            </a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ============ Aktuelles ============ -->
+  <section class="kurve kurve--nacht bild-glut aktuelles" aria-labelledby="aktuelles-titel">
+    <div class="wrap">
+      <div class="kopf">
+        <h2 id="aktuelles-titel">Aktuelles</h2>
+        <p>Statements und Events des INFERNO.</p>
+      </div>
+      {
+        beitraege.length ? (
+          <ol class="beitraege">
+            {beitraege.map((b) => {
+              const t = b.data.termin ? termin(b.data.termin) : null;
+              return (
+                <li class:list={['beitrag', `beitrag--${b.data.typ.toLowerCase()}`]}>
+                  <div class="beitrag__marke">
+                    {t ? (
+                      <time datetime={b.data.termin!.toISOString()} class="beitrag__termin">
+                        <span class="beitrag__tag">{t.tag}</span>
+                        <span class="beitrag__monat">{t.monat}</span>
+                      </time>
+                    ) : (
+                      <span class="beitrag__stempel">Statement</span>
+                    )}
+                  </div>
+                  <div class="beitrag__text">
+                    <p class="beitrag__meta">
+                      {b.data.typ} · <time datetime={b.data.datum.toISOString()}>{datum(b.data.datum)}</time>
+                      {b.data.beispiel && <span class="beitrag__beispiel">Beispiel</span>}
+                    </p>
+                    <h3>
+                      <a href={`/aktuelles/${b.id}/`}>{b.data.titel}</a>
+                    </h3>
+                    {t && (
+                      <p class="beitrag__wo">
+                        <Icon name="calendar" /> {t.zeit}
+                        {b.data.ort && (
+                          <>
+                            <Icon name="map-pin" /> {b.data.ort}
+                          </>
+                        )}
+                      </p>
+                    )}
+                    <p class="beitrag__anriss">{anriss(vorschau(b.body ?? ''), 60)}</p>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        ) : (
+          <p class="leer">Gerade gibt es keine neuen Statements oder Events.</p>
+        )
+      }
+      <a class="mehr" href="/aktuelles/">Alle Beiträge <Icon name="arrow-right" /></a>
+    </div>
+  </section>
+
+  <!-- ============ Spieltagsbilder ============ -->
+  <section class="kurve kurve--weiss bild-fahnen saisons" aria-labelledby="saisons-titel">
+    <div class="wrap">
+      <div class="kopf">
+        <h2 id="saisons-titel">Spieltagsbilder</h2>
+        <p>{zahl.format(galerienGesamt)} Galerien mit {zahl.format(bilderGesamt)} Bildern, Heim und Auswärts, seit der Saison 2016/17.</p>
+      </div>
+      <SaisonWand saisons={saisonListe} />
+    </div>
+  </section>
+
+  <Laufband variante="lila" richtung="rechts" text="Egal wann, egal wo, egal wie!" />
+
+  <!-- ============ Wer wir sind ============ -->
+  <section class="kurve kurve--lila bild-block wir" aria-labelledby="wir-titel">
+    <div class="wrap wir__raster">
+      <div class="wir__text">
+        <h2 id="wir-titel">{werWirSind.data.titel}</h2>
+        <p class="wir__lead">{werWirSind.data.teaser}</p>
+        <a class="aktion" href="/geschichte/wer-wir-sind/">Weiterlesen <Icon name="arrow-right" /></a>
+      </div>
+      <figure class="wir__foto">
+        <img src={werWirSind.data.bild} alt={werWirSind.data.bildAlt} loading="lazy" decoding="async" width="550" height="367" />
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ Gruppenlogos ============ -->
+  <section class="kurve kurve--nacht bild-zaun logos" aria-labelledby="logos-titel">
+    <div class="wrap">
+      <div class="kopf">
+        <h2 id="logos-titel">{logos.data.titel}</h2>
+        <p class="spruchband logos__band">{logos.data.untertitel}</p>
+      </div>
+      <ul class="logoreihe">
+        <li>
+          <img src="/images/logos/gruendungslogo.webp" alt="" loading="lazy" width="900" height="900" />
+          <span>Gründungslogo</span>
+        </li>
+        <li>
+          <img src="/images/logos/fuenf-jahres-emblem.webp" alt="" loading="lazy" width="900" height="873" />
+          <span>Fünf-Jahres-Emblem</span>
+        </li>
+        <li>
+          <img src="/images/logos/arminius.webp" alt="" loading="lazy" width="150" height="146" />
+          <span>Arminius</span>
+        </li>
+      </ul>
+      <p class="logos__text">{logos.data.teaser}</p>
+      <a class="mehr" href="/geschichte/gruppenlogos/">Mehr als nur Zeichen <Icon name="arrow-right" /></a>
+    </div>
+  </section>
+
+  <!-- ============ Geschichte ============ -->
+  <section class="kurve kurve--weiss bild-pyro geschichte" aria-labelledby="geschichte-titel">
+    <div class="wrap">
+      <div class="geschichte__kopf">
+        <div class="kopf">
+          <h2 id="geschichte-titel">Geschichte</h2>
+          <p>{seite('15-jahre').data.teaser}</p>
+        </div>
+        <img
+          class="geschichte__bild"
+          src="/images/geschichte/15-jahre-unruhestifter.webp"
+          alt="Zeichnung: Arminius und ein Biertrinker stoßen an, Banner „15 Jahre INFERNO – 15 Jahre UnruhestIFter!“"
+          loading="lazy"
+          width="950"
+          height="466"
+        />
+      </div>
+      <ol class="zeitleiste">
+        {
+          stationen.map((s) => (
+            <li class:list={['station', { 'station--offen': s.data.entwurf }]}>
+              <a href={`/geschichte/${s.id}/`}>
+                <span class="station__jahr">{s.data.jahr}</span>
+                <Rad class="station__rad" />
+                <span class="station__titel">{s.data.titel}</span>
+                {s.data.untertitel && <span class="station__unter">{s.data.untertitel}</span>}
+                <span class="station__text">{s.data.entwurf ? 'Text folgt.' : anriss(s.data.teaser)}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ Trailer ============ -->
+  <section class="kurve kurve--nacht bild-rauch trailer" aria-labelledby="trailer-titel">
+    <div class="wrap">
+      <div class="kopf">
+        <h2 id="trailer-titel">Trailer</h2>
+        <p>{(seite('verschwende-deine-jugend').body ?? '').match(/Zusätzlich wurden[^*]*/)?.[0].trim()}</p>
+      </div>
+      <div class="trailer__raster">
+        {
+          videos.map((v, i) => (
+            <VideoEmbed
+              class={i === 0 ? 'trailer__haupt' : ''}
+              gross={i === 0}
+              titel={v.data.titel}
+              anbieter={v.data.anbieter}
+              videoId={v.data.videoId}
+              poster={v.data.poster}
+              dauer={v.data.dauer}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Links ============ -->
+  <section class="kurve kurve--weiss bild-fahnen links" aria-labelledby="links-titel">
+    <div class="wrap">
+      <h2 id="links-titel">Links</h2>
+      {
+        links.gruppen.map((g) => (
+          <div class="linkgruppe">
+            <h3>{g.name}</h3>
+            <ul>
+              {g.links.map((l) => (
+                <li>
+                  <a href={l.url} target="_blank" rel="noopener noreferrer">
+                    <img src={l.logo} alt="" loading="lazy" />
+                    <span>
+                      {l.name} <Icon name="external-link" />
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ============ Kontakt ============ -->
+  <section class="kurve kurve--lila bild-zaun kontakt" aria-labelledby="kontakt-titel">
+    <div class="wrap kontakt__raster">
+      <div>
+        <h2 id="kontakt-titel">Kontakt</h2>
+        <p class="kontakt__text">{vorschau(kontakt.body ?? '').replace(/\s*In der Kurve!\s*$/, '')}</p>
+        <p class="spruchband kontakt__band">In der Kurve!</p>
+      </div>
+      <div class="kontakt__ende">
+        <a class="aktion" href="/kontakt/"><Icon name="send" /> Zum Kontaktboard</a>
+        <a class="mehr" href="mailto:info@inferno-os.de"><Icon name="mail" /> info@inferno-os.de</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--nacht);
+  }
+  .hero__medien,
+  .hero__poster,
+  .hero__video,
+  .hero__toenung {
+    position: absolute;
+    inset: 0;
+  }
+  .hero__medien {
+    z-index: -1;
+  }
+  .hero__poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero__video {
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 1.2s var(--ease-out);
+  }
+  .hero__video.laeuft {
+    opacity: 1;
+  }
+  .hero__datei {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero__video :global(iframe) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 177.78svh);
+    height: max(100%, 56.25vw);
+    translate: -50% -50%;
+    border: 0;
+    pointer-events: none;
+  }
+  .hero__toenung {
+    background:
+      linear-gradient(to top, rgb(10 8 11 / 0.88) 0%, rgb(10 8 11 / 0.3) 42%, rgb(10 8 11 / 0) 68%, rgb(10 8 11 / 0.45) 100%),
+      rgb(92 29 104 / 0.3);
+    mix-blend-mode: normal;
+  }
+  .hero__toenung::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('/images/korn.png') 0 0 / 180px;
+    opacity: 0.22;
+    mix-blend-mode: overlay;
+  }
+
+  .hero__leiste {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: clamp(1rem, 3vw, 2rem) var(--rand) 0;
+  }
+  .hero__logo {
+    width: clamp(4rem, 8vw, 6rem);
+    height: auto;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgb(255 255 255 / 0.15);
+  }
+  .hero__menue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.45rem 1rem 0.35rem;
+    border: 2px solid var(--weiss);
+    background: rgb(10 8 11 / 0.25);
+    color: var(--weiss);
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: 1.15rem;
+    cursor: pointer;
+  }
+  .hero__menue :global(svg) {
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+  .hero__menue:hover {
+    background: var(--weiss);
+    color: var(--lila);
+  }
+
+  .hero__inhalt {
+    align-self: end;
+    padding: 0 var(--rand) clamp(5rem, 11vh, 8rem);
+    display: grid;
+    justify-items: start;
+    gap: clamp(1.2rem, 3vh, 2rem);
+  }
+  .hero__titel {
+    display: grid;
+    line-height: 0.82;
+    letter-spacing: -0.01em;
+    text-shadow: 0 0.4rem 2.5rem rgb(10 8 11 / 0.6);
+  }
+  .hero__zeile--1 {
+    font-size: clamp(4.4rem, 17.5vw, 15.5rem);
+  }
+  .hero__zeile--2 {
+    font-size: clamp(3.1rem, 12.6vw, 11.2rem);
+    color: var(--lila-licht);
+  }
+  .hero__spruch {
+    font-size: clamp(1.45rem, 0.9rem + 2.6vw, 3.2rem);
+    margin: 0;
+    padding: 0.2em 0.6em 0.14em;
+  }
+  .hero__aktionen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+  .hero__runter {
+    position: absolute;
+    left: 50%;
+    bottom: 1.2rem;
+    translate: -50% 0;
+    color: var(--weiss);
+    animation: wippe 2.4s var(--ease-out) infinite;
+  }
+  .hero__runter :global(svg) {
+    width: 2rem;
+    height: 2rem;
+  }
+  @keyframes wippe {
+    50% {
+      transform: translateY(6px);
+    }
+  }
+  .hero__marke {
+    position: absolute;
+    top: 45%;
+    height: 1px;
+    width: 1px;
+  }
+
+  /* Der eine Auftritt: Name kommt aus dem Rauch, Spruchband schwingt ein */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__zeile {
+      animation: aus-dem-rauch 1.6s var(--ease-out) both;
+    }
+    .hero__zeile--2 {
+      animation-delay: 0.18s;
+    }
+    .hero__spruch {
+      animation: einschwingen 1.3s var(--ease-out) 0.55s both;
+      transform-origin: 0 50%;
+    }
+    .hero__aktionen {
+      animation: auftauchen 1s var(--ease-out) 0.9s both;
+    }
+  }
+  @keyframes aus-dem-rauch {
+    from {
+      opacity: 0.15;
+      filter: blur(14px);
+      transform: translateY(0.12em) scale(1.04);
+      letter-spacing: 0.06em;
+    }
+  }
+  @keyframes einschwingen {
+    from {
+      opacity: 0;
+      transform: rotate(-9deg) translateX(-1.5rem);
+    }
+  }
+  @keyframes auftauchen {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+  }
+
+  /* Trailer mit Ton */
+  .trailer-dialog {
+    width: min(100% - 2rem, 76rem);
+    max-width: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--weiss);
+    overflow: visible;
+  }
+  .trailer-dialog::backdrop {
+    background: rgb(10 8 11 / 0.92);
+  }
+  .trailer-dialog__rahmen {
+    aspect-ratio: 16 / 9;
+    background: var(--nacht);
+    box-shadow: 0 2rem 4rem -1.5rem rgb(0 0 0 / 0.8);
+  }
+  .trailer-dialog__rahmen :global(iframe),
+  .trailer-dialog__rahmen :global(video) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .trailer-dialog__titel {
+    margin: 1rem 0 0;
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: 1.3rem;
+  }
+  .trailer-dialog__zu {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 0.75rem);
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border: 2px solid var(--weiss);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--weiss);
+    cursor: pointer;
+  }
+  .trailer-dialog__zu:hover {
+    background: var(--weiss);
+    color: var(--lila);
+  }
+  .trailer-dialog__zu :global(svg) {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+
+  /* ---------- Letzter Spieltag ---------- */
+  .letzter__kopf {
+    display: grid;
+    gap: 1.2rem;
+    justify-items: start;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+  .letzter__band {
+    font-size: clamp(1.05rem, 0.8rem + 1.2vw, 1.75rem);
+    margin: 0;
+    max-width: 100%;
+  }
+  .mosaik {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: clamp(7rem, 13vw, 12rem);
+    gap: clamp(0.4rem, 1vw, 0.8rem);
+  }
+  .mosaik__bild {
+    position: relative;
+    overflow: hidden;
+    background: var(--lila-tief);
+  }
+  .mosaik__bild--gross {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  .mosaik__bild--mehr {
+    display: none;
+  }
+  .mosaik__bild img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition:
+      transform 0.9s var(--ease-out),
+      filter 0.5s var(--ease-out);
+  }
+  .mosaik__bild:hover img {
+    transform: scale(1.05);
+    filter: saturate(1.2) contrast(1.05);
+  }
+  .letzter__fuss {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2rem;
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  /* ---------- Aktuelles ---------- */
+  .beitraege {
+    list-style: none;
+    margin: 0 0 2.5rem;
+    padding: 0;
+    display: grid;
+  }
+  .beitrag {
+    display: grid;
+    grid-template-columns: clamp(5.5rem, 12vw, 9rem) minmax(0, 1fr);
+    gap: clamp(1rem, 3vw, 2.5rem);
+    padding-block: clamp(1.5rem, 3vw, 2.25rem);
+    border-top: 1px solid rgb(255 255 255 / 0.2);
+  }
+  .beitrag:last-child {
+    border-bottom: 1px solid rgb(255 255 255 / 0.2);
+  }
+  .beitrag__termin {
+    display: grid;
+    justify-items: center;
+    padding: 0.7rem 0.4rem 0.5rem;
+    background: var(--weiss);
+    color: var(--lila);
+    font-family: var(--display);
+    text-transform: uppercase;
+    line-height: 0.9;
+    transform: rotate(-3deg);
+  }
+  .beitrag__tag {
+    font-size: clamp(2.4rem, 1.8rem + 2vw, 3.6rem);
+  }
+  .beitrag__monat {
+    font-size: 1.2rem;
+  }
+  .beitrag__stempel {
+    display: inline-block;
+    padding: 0.5rem 0.6rem 0.4rem;
+    border: 3px solid var(--lila-licht);
+    color: var(--lila-licht);
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: clamp(0.95rem, 0.8rem + 0.5vw, 1.2rem);
+    transform: rotate(-6deg);
+  }
+  .beitrag__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.5rem;
+    font-size: 0.9rem;
+    color: var(--leise);
+  }
+  .beitrag__beispiel {
+    padding: 0.1rem 0.5rem;
+    background: var(--lila-logo);
+    color: var(--weiss);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .beitrag h3 a {
+    text-decoration: none;
+  }
+  .beitrag h3 a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+  }
+  .beitrag__wo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    margin: 0.8rem 0 0;
+    color: var(--lila-licht);
+    font-weight: 700;
+  }
+  .beitrag__wo :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .beitrag__anriss {
+    margin: 0.8rem 0 0;
+    max-width: var(--mass);
+    color: var(--leise);
+  }
+  .leer {
+    color: var(--leise);
+  }
+
+  /* ---------- Wer wir sind ---------- */
+  .wir__raster {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: center;
+  }
+  .wir__text {
+    display: grid;
+    gap: 1.6rem;
+    justify-items: start;
+  }
+  .wir__lead {
+    margin: 0;
+    font-size: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
+    line-height: 1.6;
+    font-style: italic;
+    max-width: 60ch;
+  }
+  .wir__foto {
+    margin: 0;
+    padding: 0.6rem;
+    background: var(--weiss);
+    transform: rotate(2.5deg);
+    box-shadow: 0 1.8rem 3.5rem -1.2rem rgb(10 8 11 / 0.7);
+  }
+  .wir__foto img {
+    width: 100%;
+  }
+
+  /* ---------- Logos ---------- */
+  .logos__band {
+    font-size: clamp(1.2rem, 0.9rem + 1.3vw, 2rem);
+    justify-self: start;
+    margin: 0;
+  }
+  .logoreihe {
+    list-style: none;
+    margin: 0 0 2.5rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: end;
+  }
+  .logoreihe li {
+    display: grid;
+    gap: 0.8rem;
+    justify-items: center;
+  }
+  .logoreihe img {
+    height: clamp(7rem, 14vw, 10.5rem);
+    width: auto;
+    padding: 0.45rem;
+    background: var(--weiss);
+    box-shadow: 0 1rem 2rem -0.8rem rgb(0 0 0 / 0.75);
+    transform: rotate(-3deg);
+    transition: transform 0.5s var(--ease-out);
+  }
+  .logoreihe li:nth-child(2) img {
+    transform: rotate(2.5deg);
+  }
+  .logoreihe li:nth-child(3) img {
+    transform: rotate(-1.5deg);
+  }
+  .logoreihe li:hover img {
+    transform: rotate(0deg) scale(1.04);
+  }
+  .logoreihe li:first-child img {
+    border-radius: 50%;
+    padding: 0;
+  }
+  .logoreihe span {
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: 1.1rem;
+    color: var(--lila-licht);
+  }
+  .logos__text {
+    max-width: var(--mass);
+    color: var(--leise);
+  }
+
+  /* ---------- Geschichte ---------- */
+  .geschichte__kopf {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    gap: 2rem;
+    align-items: center;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+  .geschichte__kopf .kopf {
+    margin-bottom: 0;
+  }
+  .geschichte__bild {
+    width: 100%;
+    max-width: 30rem;
+    justify-self: end;
+    mix-blend-mode: multiply;
+  }
+  .zeitleiste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(1rem, 2.5vw, 2rem);
+    position: relative;
+  }
+  .zeitleiste::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(clamp(3rem, 2rem + 4vw, 5.5rem) + 1.25rem);
+    height: 4px;
+    background: var(--lila);
+  }
+  .station a {
+    position: relative;
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+    color: var(--tinte);
+    text-decoration: none;
+  }
+  .station__jahr {
+    font-family: var(--display);
+    font-size: clamp(3rem, 2rem + 4vw, 5.5rem);
+    line-height: 1;
+    color: var(--lila);
+  }
+  .station :global(.station__rad) {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--lila);
+    background: var(--weiss);
+    border-radius: 50%;
+    transition: transform 0.8s var(--ease-out);
+    --rad-loch: var(--weiss);
+  }
+  .station a:hover :global(.station__rad) {
+    transform: rotate(120deg);
+  }
+  .station__titel {
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: clamp(1.6rem, 1.2rem + 1vw, 2.2rem);
+    line-height: 1;
+  }
+  .station__unter {
+    justify-self: start;
+    padding: 0.15rem 0.5rem 0.1rem;
+    background: var(--lila);
+    color: var(--weiss);
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: 1.05rem;
+    transform: rotate(-2deg);
+  }
+  .station__text {
+    color: var(--tinte-2);
+    font-size: 0.98rem;
+  }
+  .station a:hover .station__titel {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+  }
+  .station--offen .station__jahr,
+  .station--offen :global(.station__rad) {
+    color: var(--lila-logo);
+  }
+
+  /* ---------- Trailer ---------- */
+  .trailer__raster {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: clamp(1rem, 2.5vw, 2rem);
+    align-items: start;
+  }
+  .trailer__raster :global(.trailer__haupt) {
+    grid-row: span 2;
+  }
+
+  /* ---------- Links ---------- */
+  .links h2 {
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+  .linkgruppe + .linkgruppe {
+    margin-top: 2.5rem;
+  }
+  .linkgruppe h3 {
+    margin-bottom: 1.2rem;
+    color: var(--lila);
+  }
+  .linkgruppe ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 1rem;
+  }
+  .linkgruppe a {
+    display: grid;
+    gap: 0.8rem;
+    justify-items: start;
+    color: var(--tinte);
+    text-decoration: none;
+  }
+  .linkgruppe img {
+    height: 6.5rem;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    background: var(--weiss);
+    padding: 0.4rem;
+    box-shadow: 0 0.8rem 1.6rem -0.8rem rgb(42 10 53 / 0.45);
+    transition: transform 0.4s var(--ease-out);
+  }
+  .linkgruppe a:hover img {
+    transform: rotate(-2deg) scale(1.03);
+  }
+  .linkgruppe span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 700;
+  }
+  .linkgruppe span :global(svg) {
+    width: 0.95rem;
+    height: 0.95rem;
+    color: var(--lila);
+  }
+  .linkgruppe a:hover span {
+    text-decoration: underline;
+  }
+
+  /* ---------- Kontakt ---------- */
+  .kontakt__raster {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: end;
+  }
+  .kontakt__text {
+    margin: 1.5rem 0 0;
+    max-width: 60ch;
+    font-size: 1.1rem;
+  }
+  .kontakt__ende {
+    display: grid;
+    gap: 1.8rem;
+    justify-items: start;
+  }
+  .kontakt__band {
+    font-size: clamp(2rem, 1.3rem + 3vw, 3.6rem);
+    margin: 1.4rem 0 0;
+  }
+
+  @media (max-width: 900px) {
+    .wir__raster,
+    .kontakt__raster,
+    .trailer__raster,
+    .geschichte__kopf {
+      grid-template-columns: 1fr;
+    }
+    .zeitleiste {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: 3rem;
+    }
+    .zeitleiste::before {
+      display: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .mosaik {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: 8rem;
+    }
+    .mosaik__bild:nth-child(n + 4) {
+      display: none;
+    }
+    .zeitleiste {
+      grid-template-columns: 1fr;
+    }
+    .beitrag {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    .beitrag__marke {
+      justify-self: start;
+    }
+    .beitrag__termin {
+      grid-auto-flow: column;
+      gap: 0.5rem;
+      align-items: baseline;
+      padding: 0.5rem 0.8rem 0.35rem;
+    }
+    .beitrag__tag {
+      font-size: 2rem;
+    }
+  }
+</style>
+
+<script>
+  // Hintergrund-Trailer: nur laden, wenn Bewegung erwünscht ist und kein Datensparmodus aktiv ist
+  const huelle = document.querySelector<HTMLElement>('[data-hero-video]');
+  const sparen = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+  const ruhig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (huelle && !sparen && !ruhig) {
+    const frame = document.createElement('iframe');
+    frame.src = huelle.dataset.src!;
+    frame.title = 'Trailer im Hintergrund';
+    frame.allow = 'autoplay; fullscreen';
+    frame.tabIndex = -1;
+    frame.setAttribute('aria-hidden', 'true');
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    const zeigen = () => huelle.classList.add('laeuft');
+    if (frame.src.startsWith('https://player.vimeo.com/')) {
+      // Erst einblenden, wenn Vimeo wirklich abspielt; bis dahin bleibt das Kurvenbild stehen.
+      window.addEventListener('message', (e) => {
+        if (e.origin !== 'https://player.vimeo.com' || e.source !== frame.contentWindow) return;
+        let daten: { event?: string } = {};
+        try {
+          daten = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+        } catch {
+          return;
+        }
+        if (daten.event === 'ready') {
+          frame.contentWindow?.postMessage(JSON.stringify({ method: 'addEventListener', value: 'playProgress' }), 'https://player.vimeo.com');
+        }
+        if (daten.event === 'playProgress') zeigen();
+      });
+    } else {
+      frame.addEventListener('load', () => setTimeout(zeigen, 1200));
+    }
+    huelle.append(frame);
+  }
+
+  // Eigene Videodatei statt Vimeo/YouTube
+  const datei = document.querySelector<HTMLVideoElement>('[data-hero-datei]');
+  if (datei && !sparen && !ruhig) {
+    datei.addEventListener('playing', () => datei.classList.add('laeuft'), { once: true });
+    datei.play().catch(() => {});
+  }
+
+  // Trailer mit Ton im Dialog
+  const dialog = document.querySelector<HTMLDialogElement>('[data-trailer]');
+  const rahmen = document.querySelector<HTMLElement>('[data-trailer-rahmen]');
+  document.querySelector('[data-trailer-auf]')?.addEventListener('click', () => {
+    if (!dialog || !rahmen) return;
+    if (rahmen.dataset.datei) {
+      const video = document.createElement('video');
+      video.src = rahmen.dataset.src!;
+      video.controls = true;
+      video.autoplay = true;
+      video.playsInline = true;
+      rahmen.replaceChildren(video);
+      dialog.showModal();
+      return;
+    }
+    const frame = document.createElement('iframe');
+    frame.src = rahmen.dataset.src!;
+    frame.title = rahmen.dataset.titel ?? 'Trailer';
+    frame.allow = 'autoplay; fullscreen; picture-in-picture';
+    frame.allowFullscreen = true;
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    rahmen.replaceChildren(frame);
+    dialog.showModal();
+  });
+  document.querySelector('[data-trailer-zu]')?.addEventListener('click', () => dialog?.close());
+  dialog?.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+  dialog?.addEventListener('close', () => rahmen?.replaceChildren());
+</script>

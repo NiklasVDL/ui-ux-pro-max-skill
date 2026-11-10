@@ -1,0 +1,91 @@
+---
+import Base from '../../layouts/Base.astro';
+import Seitenkopf from '../../components/Seitenkopf.astro';
+import Icon from '../../components/Icon.astro';
+import Rad from '../../components/Rad.astro';
+import { seiten } from '../../lib/inhalte';
+
+const liste = (await seiten()).filter((s) => s.data.bereich === 'inferno' || s.data.bereich === 'geschichte');
+---
+
+<Base titel="Geschichte" beschreibung="Wer wir sind, unsere Gruppenlogos und die Geschichte des INFERNO Osnabrück: 5, 10, 15 und 20 Jahre.">
+  <Seitenkopf titel="Inferno!" untertitel="Verschwende deine Jugend!" bild="osnabrueck" />
+  <section class="kurve kurve--weiss bild-choreo">
+    <div class="wrap">
+      <ol class="kapitel">
+        {
+          liste.map((s) => (
+            <li class="kapitel__eintrag">
+              <div class="kapitel__marke">
+                {s.data.jahr ? <span class="kapitel__jahr">{s.data.jahr}</span> : <Rad class="kapitel__rad" />}
+              </div>
+              <div class="kapitel__text">
+                <h2>
+                  <a href={`/geschichte/${s.id}/`}>
+                    {s.data.titel}
+                    {s.data.untertitel && <span>: {s.data.untertitel}</span>}
+                  </a>
+                </h2>
+                <p>{s.data.entwurf ? 'Text folgt.' : s.data.teaser}</p>
+                <a class="mehr" href={`/geschichte/${s.id}/`} aria-hidden="true" tabindex="-1">
+                  Weiter <Icon name="arrow-right" />
+                </a>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .kapitel {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+  .kapitel__eintrag {
+    display: grid;
+    grid-template-columns: clamp(5rem, 14vw, 11rem) minmax(0, 1fr);
+    gap: clamp(1rem, 4vw, 3rem);
+    padding-block: clamp(2rem, 4vw, 3rem);
+    border-top: 3px solid var(--lila);
+  }
+  .kapitel__jahr {
+    font-family: var(--display);
+    font-size: clamp(2.6rem, 1.6rem + 4vw, 5rem);
+    line-height: 0.9;
+    color: var(--lila);
+  }
+  .kapitel__marke :global(.kapitel__rad) {
+    width: clamp(3rem, 7vw, 4.5rem);
+    height: auto;
+    color: var(--lila);
+    --rad-loch: var(--weiss);
+  }
+  .kapitel__text {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+    max-width: var(--mass);
+  }
+  .kapitel__text h2 {
+    font-size: clamp(1.8rem, 1.2rem + 2.4vw, 3.2rem);
+  }
+  .kapitel__text h2 a {
+    text-decoration: none;
+  }
+  .kapitel__text h2 a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+  }
+  .kapitel__text h2 span {
+    color: var(--lila);
+  }
+  .kapitel__text p {
+    margin: 0;
+    color: var(--tinte-2);
+  }
+</style>

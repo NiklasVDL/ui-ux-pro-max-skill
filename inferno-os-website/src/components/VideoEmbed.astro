@@ -1,0 +1,142 @@
+---
+/**
+ * Video mit Zwei-Klick-Lösung: Erst nach dem Klick wird der Player von
+ * Vimeo/YouTube geladen (Datenschutz). Vimeo läuft im „Do not track“-Modus.
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  titel: string;
+  anbieter: 'vimeo' | 'youtube';
+  videoId: string;
+  poster: string;
+  dauer?: string;
+  class?: string;
+  gross?: boolean;
+}
+const { titel, anbieter, videoId, poster, dauer, class: klasse, gross = false } = Astro.props;
+const src =
+  anbieter === 'vimeo'
+    ? `https://player.vimeo.com/video/${videoId}?autoplay=1&dnt=1&title=0&byline=0&portrait=0&color=883893`
+    : `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+---
+
+<figure class:list={['video', { 'video--gross': gross }, klasse]} data-video data-src={src} data-titel={titel}>
+  <button class="video__start" type="button" aria-label={`Video abspielen: ${titel}`}>
+    <img src={poster} alt="" loading="lazy" decoding="async" width="1280" height="720" />
+    <span class="video__knopf"><Icon name="play" /></span>
+  </button>
+  <figcaption class="video__text">
+    <span class="video__titel">{titel}</span>
+    <span class="video__hinweis">
+      {dauer && <span>{dauer} Min.</span>}
+      <span>Beim Abspielen wird eine Verbindung zu {anbieter === 'vimeo' ? 'Vimeo' : 'YouTube'} hergestellt.</span>
+    </span>
+  </figcaption>
+</figure>
+
+<style>
+  .video {
+    margin: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+  .video__start,
+  .video :global(iframe) {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    padding: 0;
+    border: 0;
+    background: var(--nacht);
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 1.5rem 3rem -1.2rem rgb(0 0 0 / 0.75);
+  }
+  .video__start img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.8) contrast(1.05);
+    transition:
+      transform 0.8s var(--ease-out),
+      filter 0.5s var(--ease-out);
+  }
+  .video__start::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgb(42 10 53 / 0.75), rgb(42 10 53 / 0.05) 60%);
+  }
+  .video__start:hover img {
+    transform: scale(1.04);
+    filter: saturate(1) contrast(1.05);
+  }
+  .video__knopf {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: clamp(3.5rem, 8vw, 5.5rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--weiss);
+    color: var(--lila);
+    translate: -50% -50%;
+    box-shadow: 0 0 0 0 rgb(255 255 255 / 0.5);
+    transition: transform 0.3s var(--ease-out);
+  }
+  .video__knopf :global(svg) {
+    width: 42%;
+    height: 42%;
+    margin-left: 8%;
+    fill: currentColor;
+  }
+  .video__start:hover .video__knopf {
+    transform: scale(1.08);
+    animation: puls 1.6s var(--ease-out) infinite;
+  }
+  @keyframes puls {
+    to {
+      box-shadow: 0 0 0 1.4rem rgb(255 255 255 / 0);
+    }
+  }
+  .video__text {
+    display: grid;
+    gap: 0.3rem;
+  }
+  .video__titel {
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: 1.3rem;
+    line-height: 1.05;
+  }
+  .video--gross .video__titel {
+    font-size: clamp(1.5rem, 1.1rem + 1.5vw, 2.2rem);
+  }
+  .video__hinweis {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    font-size: 0.85rem;
+    color: var(--leise, #cfc3d4);
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-video]').forEach((figur) => {
+    figur.querySelector('.video__start')?.addEventListener('click', () => {
+      const frame = document.createElement('iframe');
+      frame.src = figur.dataset.src!;
+      frame.title = figur.dataset.titel ?? 'Video';
+      frame.allow = 'autoplay; fullscreen; picture-in-picture';
+      frame.allowFullscreen = true;
+      frame.referrerPolicy = 'strict-origin-when-cross-origin';
+      figur.querySelector('.video__start')!.replaceWith(frame);
+      frame.focus();
+    });
+  });
+</script>

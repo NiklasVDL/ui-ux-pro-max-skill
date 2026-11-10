@@ -1,0 +1,27 @@
+---
+/** Das Osnabrücker Rad: sechs Speichen, Nabe, Felge. */
+interface Props {
+  class?: string;
+}
+const { class: klasse } = Astro.props;
+const speichen = [0, 60, 120, 180, 240, 300];
+---
+
+<style>
+  .rad {
+    width: 1em;
+    height: 1em;
+    flex: none;
+  }
+</style>
+
+<svg class:list={['rad', klasse]} viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+  <circle cx="50" cy="50" r="44" fill="none" stroke="currentColor" stroke-width="9"></circle>
+  {
+    speichen.map((w) => (
+      <path d="M50 50 L44.5 30 L50 11 L55.5 30 Z" fill="currentColor" transform={`rotate(${w} 50 50)`} />
+    ))
+  }
+  <circle cx="50" cy="50" r="8.5" fill="currentColor"></circle>
+  <circle cx="50" cy="50" r="3.2" fill="var(--rad-loch, #fff)"></circle>
+</svg>

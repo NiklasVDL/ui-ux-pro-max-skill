@@ -1,0 +1,140 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Seitenkopf from '../../../components/Seitenkopf.astro';
+import Icon from '../../../components/Icon.astro';
+import { alleSpieltage, galerieSlug, galerieUrl, saisonLang, saisonSlug, thumb } from '../../../lib/inhalte';
+
+export async function getStaticPaths() {
+  const alle = await alleSpieltage();
+  return alle.map((g) => {
+    const geschwister = alle.filter((x) => x.data.saison === g.data.saison);
+    const i = geschwister.indexOf(g);
+    return {
+      params: { saison: saisonSlug(g.data.saison), galerie: galerieSlug(g) },
+      props: { g, neuer: geschwister[i - 1], aelter: geschwister[i + 1] },
+    };
+  });
+}
+const { g, neuer, aelter } = Astro.props;
+const saisonUrl = `/spieltagsbilder/${saisonSlug(g.data.saison)}/`;
+---
+
+<Base titel={g.data.titel} beschreibung={`${g.data.titel} – Spieltagsbilder vom INFERNO Osnabrück, Saison ${saisonLang(g.data.saison)}.`} bild={g.data.bilder[0]}>
+  <Seitenkopf titel={g.data.titel} bild="rauch" mittel>
+    <nav class="pfad" aria-label="Brotkrumen">
+      <a class="mehr" href={saisonUrl}><Icon name="arrow-left" /> Saison {g.data.saison}</a>
+      <span>{g.data.bilder.length} Bilder</span>
+    </nav>
+  </Seitenkopf>
+
+  <section class="kurve kurve--nacht bild-glut">
+    <div class="wrap">
+      <ul class="galerie" data-galerie={g.data.titel}>
+        {
+          g.data.bilder.map((src, i) => (
+            <li>
+              <a href={src} data-bild>
+                <img src={thumb(src)} alt={`Bild ${i + 1} vom ${g.data.titel}`} loading={i < 6 ? 'eager' : 'lazy'} decoding="async" width="720" height="480" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <nav class="weiter" aria-label="Weitere Spieltage">
+        {
+          neuer ? (
+            <a href={galerieUrl(neuer)}>
+              <span class="weiter__richtung"><Icon name="arrow-left" /> Neuer</span>
+              <span class="weiter__titel">{neuer.data.titel}</span>
+            </a>
+          ) : <span />
+        }
+        {
+          aelter && (
+            <a class="weiter__aelter" href={galerieUrl(aelter)}>
+              <span class="weiter__richtung">Älter <Icon name="arrow-right" /></span>
+              <span class="weiter__titel">{aelter.data.titel}</span>
+            </a>
+          )
+        }
+      </nav>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .pfad {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.5rem;
+    color: var(--leise);
+  }
+  .galerie {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    columns: 3 18rem;
+    column-gap: clamp(0.5rem, 1.2vw, 1rem);
+  }
+  .galerie li {
+    break-inside: avoid;
+    margin-bottom: clamp(0.5rem, 1.2vw, 1rem);
+  }
+  .galerie a {
+    display: block;
+    overflow: hidden;
+    background: var(--lila-tief);
+  }
+  .galerie img {
+    width: 100%;
+    transition:
+      transform 0.8s var(--ease-out),
+      filter 0.5s var(--ease-out);
+  }
+  .galerie a:hover img {
+    transform: scale(1.04);
+    filter: saturate(1.2) contrast(1.05);
+  }
+  .weiter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+    padding-top: 2rem;
+    border-top: 1px solid rgb(255 255 255 / 0.2);
+  }
+  .weiter a {
+    display: grid;
+    gap: 0.4rem;
+    text-decoration: none;
+  }
+  .weiter__aelter {
+    text-align: right;
+    justify-items: end;
+  }
+  .weiter__richtung {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--display);
+    text-transform: uppercase;
+    color: var(--lila-licht);
+  }
+  .weiter__richtung :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .weiter__titel {
+    font-size: 1.05rem;
+  }
+  .weiter a:hover .weiter__titel {
+    text-decoration: underline;
+  }
+  @media (max-width: 640px) {
+    .weiter {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

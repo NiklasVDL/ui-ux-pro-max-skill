@@ -1,0 +1,107 @@
+---
+import Rad from './Rad.astro';
+import { einstellungen } from '../lib/inhalte';
+const jahr = new Date().getFullYear();
+---
+
+<footer class="fuss kurve kurve--nacht bild-osnabrueck">
+  <div class="wrap fuss__innen">
+    <div class="fuss__marke">
+      <img src="/images/logos/gruendungslogo.webp" alt="Gründungslogo INFERNO Osnabrück Ultra' Jugend" width="120" height="120" loading="lazy" />
+      <p class="display fuss__spruch">Egal wann, egal wo, egal wie!</p>
+    </div>
+    <nav class="fuss__nav" aria-label="Fußzeile">
+      <ul>
+        <li><a href="/aktuelles/">Aktuelles</a></li>
+        <li><a href="/spieltagsbilder/">Spieltagsbilder</a></li>
+        <li><a href="/geschichte/">Geschichte</a></li>
+        <li><a href="/trailer/">Trailer</a></li>
+        <li><a href="/links/">Links</a></li>
+        <li><a href="/kontakt/">Kontakt</a></li>
+      </ul>
+      <ul class="fuss__recht">
+        <li><a href="/impressum/">Impressum</a></li>
+        <li><a href="/datenschutz/">Datenschutz</a></li>
+        <li><a href={`mailto:${einstellungen.email}`}>{einstellungen.email}</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="wrap fuss__zeile">
+    <Rad class="fuss__rad" />
+    <span>© INFERNO OSNABRÜCK 2005–{jahr}</span>
+  </div>
+</footer>
+
+<style>
+  .fuss {
+    padding-block: clamp(4rem, 8vw, 6rem) 2rem;
+    border-top: 6px solid var(--lila-logo);
+  }
+  .fuss__innen {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 3rem;
+    align-items: start;
+  }
+  .fuss__marke {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2.5rem);
+  }
+  .fuss__marke img {
+    width: clamp(5rem, 10vw, 7.5rem);
+    border-radius: 50%;
+  }
+  .fuss__spruch {
+    font-size: clamp(1.8rem, 1.2rem + 2.5vw, 3.4rem);
+    line-height: 0.95;
+    max-width: 12ch;
+    margin: 0;
+  }
+  .fuss__nav {
+    display: grid;
+    gap: 1.5rem;
+  }
+  .fuss__nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+  .fuss__nav ul:first-child a {
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    text-decoration: none;
+  }
+  .fuss__nav a:hover {
+    color: var(--lila-licht);
+    text-decoration: underline;
+  }
+  .fuss__recht {
+    font-size: 0.9rem;
+    color: var(--leise);
+  }
+  .fuss__zeile {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 3.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgb(255 255 255 / 0.18);
+    font-size: 0.85rem;
+    color: var(--leise);
+  }
+  .fuss__zeile :global(.fuss__rad) {
+    width: 1.4rem;
+    height: 1.4rem;
+    color: var(--lila-licht);
+    --rad-loch: var(--nacht);
+  }
+  @media (max-width: 760px) {
+    .fuss__innen {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

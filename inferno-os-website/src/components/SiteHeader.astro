@@ -1,0 +1,404 @@
+---
+import Icon from './Icon.astro';
+import { saisons, seiten, saisonLang } from '../lib/inhalte';
+
+interface Props {
+  /** "hero": Leiste erscheint erst beim Scrollen (Startseite) */
+  modus?: 'hero' | 'fest';
+}
+const { modus = 'fest' } = Astro.props;
+const pfad = Astro.url.pathname;
+
+const saisonListe = await saisons();
+const geschichte = (await seiten()).filter((s) => s.data.bereich === 'inferno' || s.data.bereich === 'geschichte');
+
+const navigation = [
+  { titel: 'Aktuelles', href: '/aktuelles/' },
+  {
+    titel: 'Spieltagsbilder',
+    href: '/spieltagsbilder/',
+    unter: saisonListe.map((s) => ({ titel: `Saison ${saisonLang(s.saison)}`, href: `/spieltagsbilder/${s.slug}/` })),
+  },
+  {
+    titel: 'Geschichte',
+    href: '/geschichte/',
+    unter: geschichte.map((s) => ({ titel: s.data.titel, href: `/geschichte/${s.id}/` })),
+  },
+  { titel: 'Trailer', href: '/trailer/' },
+  { titel: 'Links', href: '/links/' },
+  { titel: 'Kontakt', href: '/kontakt/' },
+];
+const aktiv = (href: string) => pfad.startsWith(href);
+---
+
+<header class="kopfleiste" data-modus={modus} data-kopfleiste>
+  <div class="kopfleiste__innen">
+    <a class="marke" href="/" aria-label="INFERNO Osnabrück – Startseite">
+      <img src="/images/logos/gruendungslogo.webp" alt="" width="44" height="44" />
+      <span class="marke__name">Inferno <span>Osnabrück</span></span>
+    </a>
+
+    <nav class="hauptnav" aria-label="Hauptnavigation">
+      <ul class="hauptnav__liste">
+        {
+          navigation.map((p, i) => (
+            <li class:list={['hauptnav__punkt', { 'hat-unter': p.unter }]}>
+              <a href={p.href} aria-current={aktiv(p.href) ? 'page' : undefined}>
+                {p.titel}
+              </a>
+              {p.unter && (
+                <>
+                  <button
+                    class="hauptnav__auf"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls={`unter-${i}`}
+                    aria-label={`${p.titel}: Untermenü`}
+                  >
+                    <Icon name="chevron-down" />
+                  </button>
+                  <ul class="hauptnav__unter" id={`unter-${i}`}>
+                    {p.unter.map((u) => (
+                      <li>
+                        <a href={u.href} aria-current={pfad === u.href ? 'page' : undefined}>
+                          {u.titel}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <button class="menue-knopf" type="button" data-menue-auf aria-haspopup="dialog">
+      <Icon name="menu" />
+      <span>Menü</span>
+    </button>
+  </div>
+</header>
+
+<dialog class="menue kurve kurve--lila bild-rauch" data-menue aria-label="Menü">
+  <div class="menue__kopf">
+    <a class="marke" href="/">
+      <img src="/images/logos/gruendungslogo.webp" alt="" width="44" height="44" />
+      <span class="marke__name">Inferno <span>Osnabrück</span></span>
+    </a>
+    <button class="menue-knopf" type="button" data-menue-zu>
+      <Icon name="x" />
+      <span>Schließen</span>
+    </button>
+  </div>
+  <nav aria-label="Menü">
+    <ul class="menue__liste">
+      <li><a href="/">Start</a></li>
+      {
+        navigation.map((p) => (
+          <li>
+            <a href={p.href}>{p.titel}</a>
+            {p.unter && (
+              <ul class="menue__unter">
+                {p.unter.map((u) => (
+                  <li>
+                    <a href={u.href}>{u.titel.replace('Saison ', '')}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</dialog>
+
+<style>
+  .kopfleiste {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    height: var(--header-h);
+    background: rgb(10 8 11 / 0.82);
+    backdrop-filter: blur(14px) saturate(1.3);
+    -webkit-backdrop-filter: blur(14px) saturate(1.3);
+    border-bottom: 1px solid rgb(136 56 147 / 0.55);
+    transition:
+      transform 0.5s var(--ease-out),
+      opacity 0.4s var(--ease-out);
+  }
+  .kopfleiste[data-modus='hero']:not(.ist-sichtbar):not(:focus-within) {
+    transform: translateY(-105%);
+    opacity: 0;
+  }
+  .kopfleiste__innen {
+    height: 100%;
+    width: min(100% - 2 * var(--rand), 90rem);
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .marke {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    text-decoration: none;
+    color: var(--weiss);
+    flex: none;
+  }
+  .marke img {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+  }
+  .marke__name {
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: 1.35rem;
+    line-height: 0.9;
+    display: grid;
+  }
+  .marke__name span {
+    font-size: 0.78em;
+    color: var(--lila-licht);
+  }
+
+  .hauptnav__liste {
+    display: flex;
+    gap: clamp(0.25rem, 1.2vw, 1.25rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .hauptnav__punkt {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .hauptnav__punkt > a {
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    text-decoration: none;
+    padding: 0.5rem 0.35rem;
+    color: var(--weiss);
+    transition: color 0.2s var(--ease-out);
+  }
+  .hauptnav__punkt > a:hover,
+  .hauptnav__punkt > a[aria-current='page'] {
+    color: var(--lila-licht);
+  }
+  .hauptnav__punkt > a[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 0.35em;
+  }
+  .hauptnav__auf {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--lila-licht);
+    cursor: pointer;
+  }
+  .hauptnav__auf :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+    transition: transform 0.3s var(--ease-out);
+  }
+  .hauptnav__auf[aria-expanded='true'] :global(svg) {
+    transform: rotate(180deg);
+  }
+  .hauptnav__unter {
+    position: absolute;
+    top: calc(100% + 0.6rem);
+    left: -1rem;
+    min-width: 15rem;
+    margin: 0;
+    padding: 0.6rem 0;
+    list-style: none;
+    background: var(--lila) url('/images/kurve/fahnen-lila.webp') center / cover;
+    box-shadow: 0 1.5rem 3rem -1rem rgb(0 0 0 / 0.7);
+    border-top: 4px solid var(--weiss);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition:
+      opacity 0.25s var(--ease-out),
+      transform 0.25s var(--ease-out),
+      visibility 0.25s;
+  }
+  .hauptnav__unter::before {
+    content: '';
+    position: absolute;
+    inset: -1rem 0 auto;
+    height: 1rem;
+  }
+  .hat-unter:hover .hauptnav__unter,
+  .hat-unter:focus-within .hauptnav__unter,
+  .hauptnav__auf[aria-expanded='true'] + .hauptnav__unter {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  .hauptnav__unter a {
+    display: block;
+    padding: 0.5rem 1.2rem;
+    color: var(--weiss);
+    text-decoration: none;
+    font-size: 0.98rem;
+    white-space: nowrap;
+  }
+  .hauptnav__unter a:hover,
+  .hauptnav__unter a[aria-current='page'] {
+    background: rgb(10 8 11 / 0.35);
+    text-decoration: underline;
+  }
+
+  .menue-knopf {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.4rem 0.9rem 0.3rem;
+    border: 2px solid var(--weiss);
+    background: transparent;
+    color: var(--weiss);
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  .menue-knopf :global(svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .menue-knopf:hover {
+    background: var(--weiss);
+    color: var(--lila);
+  }
+
+  @media (max-width: 1080px) {
+    .hauptnav {
+      display: none;
+    }
+    .menue-knopf {
+      display: inline-flex;
+    }
+  }
+
+  /* Vollbild-Menü */
+  .menue {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0 var(--rand) 3rem;
+    border: 0;
+    overflow-y: auto;
+  }
+  .menue::backdrop {
+    background: rgb(10 8 11 / 0.6);
+  }
+  .menue[open] {
+    animation: menue-auf 0.45s var(--ease-out);
+  }
+  @keyframes menue-auf {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  .menue__kopf {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-h);
+    margin-bottom: 2rem;
+  }
+  .menue .menue-knopf {
+    display: inline-flex;
+  }
+  .menue__liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.2rem;
+  }
+  .menue__liste > li > a {
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: clamp(2.2rem, 1.5rem + 4vw, 4rem);
+    line-height: 1;
+    text-decoration: none;
+    color: var(--weiss);
+  }
+  .menue__liste > li > a:hover {
+    color: var(--lila-licht);
+  }
+  .menue__unter {
+    list-style: none;
+    margin: 0.6rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.1rem;
+  }
+  .menue__unter a {
+    color: #ecdcf2;
+    font-size: 1rem;
+  }
+</style>
+
+<script>
+  const leiste = document.querySelector<HTMLElement>('[data-kopfleiste]');
+  const menue = document.querySelector<HTMLDialogElement>('[data-menue]');
+
+  // Startseite: Leiste erst zeigen, wenn der Trailer aus dem Bild scrollt
+  const hero = document.querySelector('[data-hero-ende]');
+  if (leiste && hero && leiste.dataset.modus === 'hero') {
+    const beobachter = new IntersectionObserver(
+      ([e]) => leiste.classList.toggle('ist-sichtbar', !e.isIntersecting && e.boundingClientRect.top < 0),
+      { threshold: 0 },
+    );
+    beobachter.observe(hero);
+  }
+
+  document.querySelectorAll('[data-menue-auf]').forEach((knopf) =>
+    knopf.addEventListener('click', () => menue?.showModal()),
+  );
+  document.querySelector('[data-menue-zu]')?.addEventListener('click', () => menue?.close());
+  menue?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) menue.close();
+  });
+
+  // Untermenüs per Knopf (Tastatur/Touch)
+  const knoepfe = document.querySelectorAll<HTMLButtonElement>('.hauptnav__auf');
+  knoepfe.forEach((knopf) =>
+    knopf.addEventListener('click', () => {
+      const offen = knopf.getAttribute('aria-expanded') === 'true';
+      knoepfe.forEach((k) => k.setAttribute('aria-expanded', 'false'));
+      knopf.setAttribute('aria-expanded', String(!offen));
+    }),
+  );
+  document.addEventListener('click', (e) => {
+    if (!(e.target as HTMLElement).closest('.hat-unter')) knoepfe.forEach((k) => k.setAttribute('aria-expanded', 'false'));
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') knoepfe.forEach((k) => k.setAttribute('aria-expanded', 'false'));
+  });
+</script>

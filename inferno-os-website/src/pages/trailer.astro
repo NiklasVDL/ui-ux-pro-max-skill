@@ -1,0 +1,50 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Seitenkopf from '../components/Seitenkopf.astro';
+import VideoEmbed from '../components/VideoEmbed.astro';
+import { seiten, trailer } from '../lib/inhalte';
+
+const vdj = (await seiten('trailer'))[0];
+const { Content } = await render(vdj);
+const videos = await trailer();
+---
+
+<Base titel="Trailer" beschreibung="Trailer und Videorückblicke des INFERNO Osnabrück: Verschwende deine Jugend!">
+  <Seitenkopf titel="Trailer" untertitel={vdj.data.titel} bild="rauch" />
+  <section class="kurve kurve--nacht bild-glut">
+    <div class="wrap trailerseite">
+      <div class="lesetext trailerseite__text"><Content /></div>
+      <div class="trailerseite__videos">
+        {
+          videos.map((v, i) => (
+            <VideoEmbed gross={i === 0} titel={v.data.titel} anbieter={v.data.anbieter} videoId={v.data.videoId} poster={v.data.poster} dauer={v.data.dauer} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .trailerseite {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+  .trailerseite__text {
+    font-size: 1.15rem;
+  }
+  .trailerseite__videos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .trailerseite__videos > :global(:first-child) {
+    grid-column: 1 / -1;
+  }
+  @media (max-width: 700px) {
+    .trailerseite__videos {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

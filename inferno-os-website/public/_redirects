@@ -1,0 +1,24 @@
+# Alte Adressen der bisherigen Seite -> neue Adressen (301 = dauerhaft)
+/index.html                   /                               301
+/home.html                    /                               301
+/inferno.html                 /geschichte/                    301
+/Inferno/werwirsind.html      /geschichte/wer-wir-sind/       301
+/werwirsind.html              /geschichte/wer-wir-sind/       301
+/Inferno/logos.html           /geschichte/gruppenlogos/       301
+/logos.html                   /geschichte/gruppenlogos/       301
+/Inferno/blickzurueck.html    /geschichte/5-jahre/            301
+/Inferno/zehnjahre.html       /geschichte/10-jahre/           301
+/Inferno/fuenfzehnjahre.html  /geschichte/15-jahre/           301
+/Inferno/vdj.html             /trailer/                       301
+/fotos.html                   /spieltagsbilder/               301
+/Fotos/1617.html              /spieltagsbilder/2016-17/       301
+/Fotos/1718.html              /spieltagsbilder/2017-18/       301
+/Fotos/1819.html              /spieltagsbilder/2018-19/       301
+/Fotos/1920.html              /spieltagsbilder/2019-20/       301
+/Fotos/2122.html              /spieltagsbilder/2021-22/       301
+/Fotos/2223.html              /spieltagsbilder/2022-23/       301
+/Fotos/2324.html              /spieltagsbilder/2023-24/       301
+/Fotos/2425.html              /spieltagsbilder/2024-25/       301
+/Fotos/2526.html              /spieltagsbilder/2025-26/       301
+/links.html                   /links/                         301
+/kontakt.html                 /kontakt/                       301

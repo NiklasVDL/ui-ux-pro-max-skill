@@ -1,0 +1,110 @@
+---
+import Base from '../../layouts/Base.astro';
+import Seitenkopf from '../../components/Seitenkopf.astro';
+import Icon from '../../components/Icon.astro';
+import { aktuelles, datum, termin } from '../../lib/inhalte';
+
+const liste = await aktuelles();
+---
+
+<Base titel="Aktuelles" beschreibung="Statements und Events des INFERNO Osnabrück.">
+  <Seitenkopf titel="Aktuelles" untertitel="Statements & Events" bild="glut" />
+  <section class="kurve kurve--nacht bild-rauch">
+    <div class="wrap">
+      {
+        liste.length ? (
+          <ol class="liste">
+            {liste.map((b) => {
+              const t = b.data.termin ? termin(b.data.termin) : null;
+              return (
+                <li class="eintrag">
+                  <p class="eintrag__meta">
+                    <span class="eintrag__typ">{b.data.typ}</span>
+                    <time datetime={b.data.datum.toISOString()}>{datum(b.data.datum)}</time>
+                    {b.data.beispiel && <span class="eintrag__beispiel">Beispiel</span>}
+                  </p>
+                  <h2>
+                    <a href={`/aktuelles/${b.id}/`}>{b.data.titel}</a>
+                  </h2>
+                  {t && (
+                    <p class="eintrag__wo">
+                      <Icon name="calendar" /> {t.tag}. {t.monat}, {t.zeit}
+                      {b.data.ort && (
+                        <>
+                          <Icon name="map-pin" /> {b.data.ort}
+                        </>
+                      )}
+                    </p>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        ) : (
+          <p>Gerade gibt es keine Statements oder Events.</p>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .eintrag {
+    padding-block: clamp(1.75rem, 3vw, 2.5rem);
+    border-top: 1px solid rgb(255 255 255 / 0.2);
+    display: grid;
+    gap: 0.7rem;
+  }
+  .eintrag h2 {
+    font-size: clamp(1.8rem, 1.2rem + 2.4vw, 3.2rem);
+  }
+  .eintrag h2 a {
+    text-decoration: none;
+  }
+  .eintrag h2 a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+  }
+  .eintrag__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1rem;
+    align-items: center;
+    margin: 0;
+    color: var(--leise);
+  }
+  .eintrag__typ {
+    padding: 0.2rem 0.6rem 0.1rem;
+    background: var(--weiss);
+    color: var(--lila);
+    font-family: var(--display);
+    text-transform: uppercase;
+    transform: rotate(-2deg);
+  }
+  .eintrag__beispiel {
+    padding: 0.1rem 0.5rem;
+    background: var(--lila-logo);
+    color: var(--weiss);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .eintrag__wo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    margin: 0;
+    color: var(--lila-licht);
+    font-weight: 700;
+  }
+  .eintrag__wo :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+</style>

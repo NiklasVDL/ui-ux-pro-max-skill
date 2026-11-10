@@ -1,0 +1,55 @@
+---
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import Lightbox from '../components/Lightbox.astro';
+import { einstellungen } from '../lib/inhalte';
+
+interface Props {
+  titel?: string;
+  beschreibung?: string;
+  bild?: string;
+  kopf?: 'hero' | 'fest';
+}
+const {
+  titel,
+  beschreibung = 'INFERNO Osnabrück – Ultràjugend seit 2005. Spieltagsbilder, Geschichte, Trailer und Aktuelles. Verschwende deine Jugend!',
+  bild = '/images/kurve/zaun-hero.webp',
+  kopf = 'fest',
+} = Astro.props;
+const voll = titel ? `${titel} | INFERNO Osnabrück` : 'INFERNO Osnabrück – Verschwende deine Jugend!';
+const kanonisch = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{voll}</title>
+    <meta name="description" content={beschreibung} />
+    {einstellungen.vorschau && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={kanonisch} />
+    <meta name="theme-color" content="#5c1d68" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/icon-192.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/fonts/display.css" />
+    <link rel="preload" href="/fonts/rubik-distressed-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:title" content={voll} />
+    <meta property="og:description" content={beschreibung} />
+    <meta property="og:image" content={new URL(bild, Astro.site)} />
+    <meta property="og:url" content={kanonisch} />
+  </head>
+  <body>
+    <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+    <SiteHeader modus={kopf} />
+    <main id="inhalt">
+      <slot />
+    </main>
+    <SiteFooter />
+    <Lightbox />
+  </body>
+</html>

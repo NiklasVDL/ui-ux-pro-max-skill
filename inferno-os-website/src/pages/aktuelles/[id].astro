@@ -1,0 +1,77 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Seitenkopf from '../../components/Seitenkopf.astro';
+import Textseite from '../../components/Textseite.astro';
+import Icon from '../../components/Icon.astro';
+import { aktuelles, datum, termin } from '../../lib/inhalte';
+
+export async function getStaticPaths() {
+  return (await aktuelles()).map((b) => ({ params: { id: b.id }, props: { b } }));
+}
+const { b } = Astro.props;
+const { Content } = await render(b);
+const t = b.data.termin ? termin(b.data.termin) : null;
+---
+
+<Base titel={b.data.titel} bild={b.data.bild}>
+  <Seitenkopf titel={b.data.titel} untertitel={b.data.typ} bild={b.data.typ === 'Event' ? 'fahnen' : 'glut'} mittel />
+  <Textseite bild="rauch" flaeche="nacht">
+    <p class="meta">
+      <time datetime={b.data.datum.toISOString()}>{datum(b.data.datum)}</time>
+      {b.data.beispiel && <span class="beispiel">Beispiel für die Vorschau</span>}
+    </p>
+    {
+      t && (
+        <p class="wann">
+          <Icon name="calendar" /> {t.tag}. {t.monat}, {t.zeit}
+          {b.data.ort && (
+            <>
+              <Icon name="map-pin" /> {b.data.ort}
+            </>
+          )}
+        </p>
+      )
+    }
+    {b.data.bild && <img class="bild" src={b.data.bild} alt={b.data.bildAlt ?? ''} />}
+    <div class="lesetext"><Content /></div>
+    <a class="mehr zurueck" href="/aktuelles/" slot="neben"><Icon name="arrow-left" /> Alle Beiträge</a>
+  </Textseite>
+</Base>
+
+<style>
+  .meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    color: var(--tinte-2);
+  }
+  .beispiel {
+    padding: 0.1rem 0.5rem;
+    background: var(--lila-logo);
+    color: var(--weiss);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .wann {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.6rem;
+    font-weight: 700;
+    color: var(--lila);
+  }
+  .wann :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .bild {
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+  .zurueck {
+    justify-self: center;
+    width: min(100%, 52rem);
+  }
+</style>

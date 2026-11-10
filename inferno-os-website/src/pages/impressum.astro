@@ -1,0 +1,14 @@
+---
+import { getEntry, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Seitenkopf from '../components/Seitenkopf.astro';
+import Textseite from '../components/Textseite.astro';
+
+const s = (await getEntry('seiten', 'impressum'))!;
+const { Content } = await render(s);
+---
+
+<Base titel={s.data.titel}>
+  <Seitenkopf titel={s.data.titel} bild="osnabrueck" />
+  <Textseite bild="fahnen"><div class="lesetext"><Content /></div></Textseite>
+</Base>

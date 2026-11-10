@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.astro/
+public/_thumbs/
+.wrangler/
+.env
+.env.*
+.DS_Store
+.impeccable/questions/
+.impeccable/mocks/
+.impeccable/review/
+
+# Vorläufiger Ablageort (Skill-Repo): das Fotoarchiv der alten Seite (ca. 180 MB) wird nicht
+# mit eingecheckt. `npm run migrate` holt es neu. Im eigenen Website-Repo diese Zeile löschen
+# und das Archiv einchecken (docs/LIVEGANG.md, Schritt 1).
+public/media/spieltage/

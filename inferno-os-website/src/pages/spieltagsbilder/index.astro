@@ -1,0 +1,21 @@
+---
+import Base from '../../layouts/Base.astro';
+import Seitenkopf from '../../components/Seitenkopf.astro';
+import SaisonWand from '../../components/SaisonWand.astro';
+import { saisons } from '../../lib/inhalte';
+
+const liste = await saisons();
+const zahl = new Intl.NumberFormat('de-DE');
+const galerien = liste.reduce((n, s) => n + s.galerien.length, 0);
+const bilder = liste.reduce((n, s) => n + s.bilder, 0);
+---
+
+<Base titel="Spieltagsbilder" beschreibung="Spieltagsbilder des INFERNO Osnabrück: alle Saisons seit 2016/17, Heim und Auswärts.">
+  <Seitenkopf titel="Spieltagsbilder" bild="fahnen" text={`${zahl.format(galerien)} Galerien mit ${zahl.format(bilder)} Bildern seit der Saison 2016/17.`} />
+  <section class="kurve kurve--weiss bild-fahnen">
+    <div class="wrap">
+      <h2 class="visually-hidden">Saisons</h2>
+      <SaisonWand saisons={liste} />
+    </div>
+  </section>
+</Base>

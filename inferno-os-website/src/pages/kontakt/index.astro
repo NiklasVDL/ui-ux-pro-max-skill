@@ -1,0 +1,232 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Seitenkopf from '../../components/Seitenkopf.astro';
+import Icon from '../../components/Icon.astro';
+import { seiten, einstellungen } from '../../lib/inhalte';
+
+const kontakt = (await seiten('kontakt'))[0];
+const { Content } = await render(kontakt);
+const turnstile = import.meta.env.PUBLIC_TURNSTILE_SITEKEY;
+---
+
+<Base titel="Kontakt" beschreibung="Kontakt zum INFERNO Osnabrück.">
+  <Seitenkopf titel="Kontakt" untertitel="In der Kurve!" bild="zaun" />
+  <section class="kurve kurve--lila bild-fahnen">
+    <div class="wrap kontaktseite">
+      <div class="kontaktseite__text lesetext">
+        <Content />
+        <p class="direkt">
+          <Icon name="mail" />
+          <a href={`mailto:${einstellungen.email}`}>{einstellungen.email}</a>
+        </p>
+      </div>
+
+      <form class="board" method="post" action="/api/kontakt" data-kontakt novalidate>
+        <h2 class="board__titel">Kontaktboard</h2>
+        <div class="feld">
+          <label for="k-name">Name</label>
+          <input id="k-name" name="name" type="text" autocomplete="name" maxlength="120" required />
+        </div>
+        <div class="feld">
+          <label for="k-mail">eMail</label>
+          <input id="k-mail" name="email" type="email" autocomplete="email" maxlength="200" required />
+        </div>
+        <div class="feld">
+          <label for="k-betreff">Betreff</label>
+          <input id="k-betreff" name="betreff" type="text" maxlength="200" required />
+        </div>
+        <div class="feld">
+          <label for="k-nachricht">Nachricht</label>
+          <textarea id="k-nachricht" name="nachricht" rows="7" maxlength="5000" required></textarea>
+        </div>
+        <div class="feld feld--falle" aria-hidden="true">
+          <label for="k-website">Website (bitte leer lassen)</label>
+          <input id="k-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+        <input type="hidden" name="zeit" value="" data-zeit />
+        {turnstile && <div class="cf-turnstile" data-sitekey={turnstile} data-theme="light" data-language="de"></div>}
+        <p class="board__hinweis">
+          Mit dem Absenden werden deine Angaben per E-Mail an das INFERNO geschickt und nur zur Beantwortung genutzt. Mehr dazu unter <a href="/datenschutz/">Datenschutz</a>.
+        </p>
+        <button class="aktion" type="submit"><Icon name="send" /> Absenden</button>
+        <p class="board__status" role="status" aria-live="polite" data-status></p>
+      </form>
+    </div>
+  </section>
+  {turnstile && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+</Base>
+
+<style>
+  .kontaktseite {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+  .kontaktseite__text {
+    font-size: 1.2rem;
+  }
+  .direkt {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 700;
+  }
+  .direkt :global(svg) {
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+  .direkt a {
+    color: var(--weiss);
+  }
+  .board {
+    display: grid;
+    gap: 1.1rem;
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+    background: var(--weiss);
+    color: var(--tinte);
+    box-shadow: 0 2rem 4rem -2rem rgb(10 8 11 / 0.6);
+    transform: rotate(-0.6deg);
+    color-scheme: light;
+  }
+  .board__titel {
+    color: var(--lila);
+    font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+  }
+  .feld {
+    display: grid;
+    gap: 0.35rem;
+  }
+  .feld label {
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: 1.1rem;
+    color: var(--lila);
+  }
+  .feld input,
+  .feld textarea {
+    width: 100%;
+    padding: 0.75rem 0.85rem;
+    border: 2px solid #cbb8d3;
+    border-radius: 0;
+    background: var(--nebel);
+    color: var(--tinte);
+    font: inherit;
+    caret-color: var(--lila);
+    transition:
+      border-color 0.2s var(--ease-out),
+      background-color 0.2s var(--ease-out);
+  }
+  .feld input:hover,
+  .feld textarea:hover {
+    border-color: var(--lila-logo);
+  }
+  .feld input:focus-visible,
+  .feld textarea:focus-visible {
+    outline: none;
+    border-color: var(--lila);
+    background: var(--weiss);
+    box-shadow: 0 0 0 3px rgb(136 56 147 / 0.25);
+  }
+  .feld input[aria-invalid='true'],
+  .feld textarea[aria-invalid='true'] {
+    border-color: #b3261e;
+  }
+  .feld--falle {
+    position: absolute;
+    left: -9999px;
+  }
+  .board__hinweis {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--tinte-2);
+  }
+  .board__hinweis a {
+    color: var(--lila);
+  }
+  .board .aktion {
+    justify-self: start;
+    --a-bg: var(--lila);
+    --a-fg: var(--weiss);
+  }
+  .board .aktion[disabled] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+  .board__status {
+    margin: 0;
+    font-weight: 700;
+    min-height: 1.5em;
+  }
+  .board__status[data-art='ok'] {
+    color: #1d6b3a;
+  }
+  .board__status[data-art='fehler'] {
+    color: #b3261e;
+  }
+  @media (max-width: 860px) {
+    .kontaktseite {
+      grid-template-columns: 1fr;
+    }
+    .board {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-kontakt]');
+  const status = form?.querySelector<HTMLElement>('[data-status]');
+  const zeit = form?.querySelector<HTMLInputElement>('[data-zeit]');
+  if (zeit) zeit.value = String(Date.now());
+
+  // Rückmeldung, wenn das Formular ohne JavaScript abgeschickt wurde
+  const query = new URLSearchParams(location.search);
+
+  const melde = (text: string, art: 'ok' | 'fehler') => {
+    if (!status) return;
+    status.textContent = text;
+    status.dataset.art = art;
+  };
+
+  if (query.has('gesendet')) melde('Danke! Deine Nachricht ist angekommen.', 'ok');
+  if (query.has('fehler')) melde('Das hat nicht geklappt. Schreib uns bitte direkt eine E-Mail.', 'fehler');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const felder = [...form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input[required], textarea[required]')];
+    let erstesFalsch: HTMLElement | null = null;
+    for (const f of felder) {
+      const ok = f.checkValidity();
+      f.setAttribute('aria-invalid', String(!ok));
+      if (!ok && !erstesFalsch) erstesFalsch = f;
+    }
+    if (erstesFalsch) {
+      melde('Bitte fülle alle Felder aus und prüfe deine E-Mail-Adresse.', 'fehler');
+      erstesFalsch.focus();
+      return;
+    }
+    const knopf = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    knopf.disabled = true;
+    melde('Wird gesendet …', 'ok');
+    try {
+      const antwort = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+      const daten = await antwort.json().catch(() => ({}));
+      if (antwort.ok) {
+        form.reset();
+        melde('Danke! Deine Nachricht ist angekommen.', 'ok');
+      } else {
+        melde(daten.fehler ?? 'Das hat nicht geklappt. Schreib uns bitte direkt eine E-Mail.', 'fehler');
+      }
+    } catch {
+      melde('Keine Verbindung. Versuch es gleich noch einmal oder schreib uns direkt eine E-Mail.', 'fehler');
+    } finally {
+      knopf.disabled = false;
+    }
+  });
+</script>

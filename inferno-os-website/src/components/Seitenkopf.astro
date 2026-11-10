@@ -1,0 +1,51 @@
+---
+/** Kopf einer Unterseite: lila Kurvenfläche, großer Titel, optional Spruchband. */
+interface Props {
+  titel: string;
+  untertitel?: string;
+  bild?: string;
+  text?: string;
+  mittel?: boolean;
+}
+const { titel, untertitel, bild = 'pyro', text, mittel = false } = Astro.props;
+---
+
+<section class:list={['seitenkopf', 'kurve', 'kurve--lila', `bild-${bild}`, { 'seitenkopf--mittel': mittel }]}>
+  <div class="wrap seitenkopf__innen">
+    <h1>{titel}</h1>
+    {untertitel && <p class="spruchband seitenkopf__band">{untertitel}</p>}
+    {text && <p class="seitenkopf__text">{text}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .seitenkopf {
+    padding-block: calc(var(--header-h) + clamp(3rem, 8vw, 6rem)) clamp(3.5rem, 8vw, 6rem);
+  }
+  .seitenkopf__innen {
+    display: grid;
+    gap: 1.4rem;
+    justify-items: start;
+  }
+  .seitenkopf h1 {
+    font-size: clamp(2.3rem, 0.6rem + 7vw, 6rem);
+    max-width: 16ch;
+    hyphens: auto;
+  }
+  .seitenkopf--mittel h1 {
+    font-size: clamp(1.7rem, 1rem + 3.2vw, 4rem);
+    max-width: 24ch;
+    line-height: 1;
+  }
+  .seitenkopf__band {
+    font-size: clamp(1.3rem, 1rem + 1.4vw, 2.1rem);
+    margin: 0;
+  }
+  .seitenkopf__text {
+    max-width: var(--mass);
+    color: var(--leise);
+    margin: 0;
+    font-size: 1.1rem;
+  }
+</style>

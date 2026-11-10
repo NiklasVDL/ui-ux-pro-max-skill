@@ -1,0 +1,23 @@
+---
+/** Inline-SVG aus lucide-static (ISC-Lizenz), beim Build eingelesen. */
+import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+
+interface Props {
+  name: string;
+  class?: string;
+  label?: string;
+}
+const { name, class: klasse, label } = Astro.props;
+const require = createRequire(import.meta.url);
+const datei = require.resolve(`lucide-static/icons/${name}.svg`);
+const roh = readFileSync(datei, 'utf8')
+  .replace(/<!--[\s\S]*?-->/g, '')
+  .replace(/\sclass="[^"]*"/, '')
+  .replace(/\s(width|height)="24"/g, '')
+  .trim();
+const attrs = label ? `role="img" aria-label="${label}"` : 'aria-hidden="true" focusable="false"';
+const svg = roh.replace('<svg', `<svg class="icon ${klasse ?? ''}" ${attrs}`);
+---
+
+<Fragment set:html={svg} />

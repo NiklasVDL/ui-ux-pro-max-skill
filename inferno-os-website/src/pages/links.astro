@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro';
+import Seitenkopf from '../components/Seitenkopf.astro';
+import Icon from '../components/Icon.astro';
+import links from '../data/links.json';
+---
+
+<Base titel="Links" beschreibung="Links zur Osnabrücker Fanszene und zu Initiativen, die das INFERNO unterstützt.">
+  <Seitenkopf titel="Links" bild="block" />
+  <section class="kurve kurve--weiss bild-fahnen">
+    <div class="wrap">
+      {
+        links.gruppen.map((g) => (
+          <div class="gruppe">
+            <h2>{g.name}</h2>
+            <ul>
+              {g.links.map((l) => (
+                <li>
+                  <a href={l.url} target="_blank" rel="noopener noreferrer">
+                    <span class="logo">
+                      <img src={l.logo} alt="" loading="lazy" />
+                    </span>
+                    <span class="name">
+                      {l.name} <Icon name="external-link" />
+                    </span>
+                    <span class="url">{l.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .gruppe + .gruppe {
+    margin-top: clamp(3rem, 6vw, 5rem);
+  }
+  .gruppe h2 {
+    color: var(--lila);
+    margin-bottom: 1.5rem;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+    gap: clamp(1rem, 2.5vw, 2rem);
+  }
+  a {
+    display: grid;
+    gap: 0.6rem;
+    color: var(--tinte);
+    text-decoration: none;
+  }
+  .logo {
+    display: grid;
+    place-items: center;
+    height: 11rem;
+    padding: 1rem;
+    background: var(--weiss);
+    box-shadow: 0 1rem 2rem -1rem rgb(42 10 53 / 0.45);
+    transition: transform 0.4s var(--ease-out);
+  }
+  .logo img {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+  a:hover .logo {
+    transform: rotate(-1.5deg) translateY(-3px);
+  }
+  .name {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: 1.35rem;
+    line-height: 1;
+  }
+  .name :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    color: var(--lila);
+  }
+  .url {
+    font-size: 0.9rem;
+    color: var(--tinte-2);
+  }
+  a:hover .name {
+    text-decoration: underline;
+  }
+</style>

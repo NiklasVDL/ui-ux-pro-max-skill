@@ -1,0 +1,8 @@
+# Vorschau-Phase: Suchmaschinen bleiben draußen.
+# Beim Livegang ersetzen durch:
+#   User-agent: *
+#   Allow: /
+#   Disallow: /admin/
+#   Sitemap: https://www.inferno-os.de/sitemap-index.xml
+User-agent: *
+Disallow: /

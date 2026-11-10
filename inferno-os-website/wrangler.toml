@@ -1,0 +1,10 @@
+# Cloudflare Pages – Projektkonfiguration
+name = "inferno-os"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-10-01"
+
+# Variablen ohne Geheimnis. Geheimnisse (TURNSTILE_SECRET, RESEND_API_KEY) nur im
+# Cloudflare-Dashboard unter Settings -> Variables and Secrets als "Secret" anlegen.
+[vars]
+KONTAKT_AN = "info@inferno-os.de"
+KONTAKT_VON = "kontaktboard@inferno-os.de"

@@ -1,0 +1,394 @@
+/* ============================================================
+   INFERNO Osnabrück – Gestaltungssystem
+   Lila · Weiß · Schwarz. Jede Fläche trägt ein Kurvenbild.
+   ============================================================ */
+
+:root {
+  --lila: #5c1d68;
+  --lila-tief: #2a0a35;
+  --lila-logo: #883893;
+  --lila-licht: #d7b4e3;
+  --nacht: #0a080b;
+  --nacht-2: #140b17;
+  --weiss: #ffffff;
+  --nebel: #f6f1f8;
+  --tinte: #170d1a;
+  --tinte-2: #4a3a50;
+
+  --display: 'Damaged Goods', 'Rubik Distressed', 'Arial Black', sans-serif;
+  --text: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+
+  --rand: clamp(1rem, 4vw, 3.5rem);
+  --breite: 78rem;
+  --mass: 68ch;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --header-h: 4.25rem;
+
+  color-scheme: dark;
+}
+
+@font-face {
+  font-family: 'Rubik Distressed';
+  src: url('/fonts/rubik-distressed-latin.woff2') format('woff2');
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Rubik Distressed';
+  src: url('/fonts/rubik-distressed-latin-ext.woff2') format('woff2');
+  font-display: swap;
+  unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+  scrollbar-color: var(--lila-logo) var(--nacht);
+  background: var(--nacht);
+}
+
+body {
+  margin: 0;
+  font-family: var(--text);
+  font-size: clamp(1rem, 0.95rem + 0.2vw, 1.0625rem);
+  line-height: 1.65;
+  color: var(--weiss);
+  background: var(--nacht) url('/images/kurve/glut-schwarz.webp') center / cover fixed;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--lila-logo);
+  color: var(--weiss);
+}
+
+:focus-visible {
+  outline: 3px solid var(--lila-licht);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+img,
+video,
+iframe {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.2em;
+}
+
+h1,
+h2,
+h3,
+.display {
+  font-family: var(--display);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2.6rem, 1.4rem + 5vw, 5.75rem);
+}
+h2 {
+  font-size: clamp(2.1rem, 1.3rem + 3.4vw, 4.25rem);
+}
+h3 {
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 1.9rem);
+  line-height: 1.05;
+}
+
+p {
+  margin: 0 0 1.1em;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  background: var(--weiss);
+  color: var(--lila);
+  font-weight: 700;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+.wrap {
+  width: min(100% - 2 * var(--rand), var(--breite));
+  margin-inline: auto;
+}
+
+/* ------------------------------------------------------------
+   Kurvenflächen: lila, nacht, weiß – immer mit Kurvenbild
+   ------------------------------------------------------------ */
+.kurve {
+  position: relative;
+  isolation: isolate;
+  padding-block: clamp(4rem, 9vw, 8rem);
+  background-color: var(--flaeche);
+  background-image: var(--bild);
+  background-size: cover;
+  background-position: center var(--bild-y, 50%);
+  color: var(--vorder);
+}
+
+.kurve--lila {
+  --flaeche: var(--lila);
+  --vorder: var(--weiss);
+  --leise: #e9d6ef;
+  --akzent: var(--weiss);
+}
+.kurve--nacht {
+  --flaeche: var(--nacht);
+  --vorder: var(--weiss);
+  --leise: #cfc3d4;
+  --akzent: var(--lila-licht);
+}
+.kurve--weiss {
+  --flaeche: var(--weiss);
+  --vorder: var(--tinte);
+  --leise: var(--tinte-2);
+  --akzent: var(--lila);
+  color-scheme: light;
+}
+
+/* Bildzuordnung – Dateinamen aus scripts/make-curves.mjs */
+.bild-pyro.kurve--lila { --bild: url('/images/kurve/pyro-lila.webp'); }
+.bild-pyro.kurve--nacht { --bild: url('/images/kurve/pyro-schwarz.webp'); }
+.bild-pyro.kurve--weiss { --bild: url('/images/kurve/pyro-weiss.webp'); }
+.bild-glut.kurve--lila { --bild: url('/images/kurve/glut-lila.webp'); }
+.bild-glut.kurve--nacht { --bild: url('/images/kurve/glut-schwarz.webp'); }
+.bild-glut.kurve--weiss { --bild: url('/images/kurve/glut-weiss.webp'); }
+.bild-block.kurve--lila { --bild: url('/images/kurve/block-lila.webp'); }
+.bild-block.kurve--nacht { --bild: url('/images/kurve/block-schwarz.webp'); }
+.bild-block.kurve--weiss { --bild: url('/images/kurve/block-weiss.webp'); }
+.bild-choreo.kurve--lila { --bild: url('/images/kurve/choreo-lila.webp'); }
+.bild-choreo.kurve--nacht { --bild: url('/images/kurve/choreo-schwarz.webp'); }
+.bild-choreo.kurve--weiss { --bild: url('/images/kurve/choreo-weiss.webp'); }
+.bild-fahnen.kurve--lila { --bild: url('/images/kurve/fahnen-lila.webp'); }
+.bild-fahnen.kurve--nacht { --bild: url('/images/kurve/fahnen-schwarz.webp'); }
+.bild-fahnen.kurve--weiss { --bild: url('/images/kurve/fahnen-weiss.webp'); }
+.bild-rauch.kurve--lila { --bild: url('/images/kurve/rauch-lila.webp'); }
+.bild-rauch.kurve--nacht { --bild: url('/images/kurve/rauch-schwarz.webp'); }
+.bild-rauch.kurve--weiss { --bild: url('/images/kurve/rauch-weiss.webp'); }
+.bild-osnabrueck.kurve--lila { --bild: url('/images/kurve/osnabrueck-lila.webp'); }
+.bild-osnabrueck.kurve--nacht { --bild: url('/images/kurve/osnabrueck-schwarz.webp'); }
+.bild-osnabrueck.kurve--weiss { --bild: url('/images/kurve/osnabrueck-weiss.webp'); }
+.bild-zaun.kurve--lila { --bild: url('/images/kurve/zaun-lila.webp'); }
+.bild-zaun.kurve--nacht { --bild: url('/images/kurve/zaun-schwarz.webp'); }
+.bild-zaun.kurve--weiss { --bild: url('/images/kurve/zaun-weiss.webp'); }
+
+/* Feines Korn über jeder Fläche, wie Flutlicht auf Rauch */
+.kurve::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url('/images/korn.png');
+  background-size: 180px;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+}
+
+/* Kante zwischen Flächen: schräg geschnitten wie ein Banner */
+.kurve--schraeg {
+  clip-path: polygon(0 0, 100% 2.5vw, 100% 100%, 0 calc(100% - 2.5vw));
+  margin-block: -2.5vw;
+  padding-block: calc(clamp(4rem, 9vw, 8rem) + 2.5vw);
+}
+
+/* ------------------------------------------------------------
+   Spruchband: weißes Tuch, lila gemalte Schrift, schräg gehängt
+   ------------------------------------------------------------ */
+.spruchband {
+  --neigung: -2.2deg;
+  display: inline-block;
+  padding: 0.18em 0.55em 0.12em;
+  background: var(--weiss);
+  color: var(--lila);
+  font-family: var(--display);
+  text-transform: uppercase;
+  line-height: 1;
+  transform: rotate(var(--neigung));
+  box-shadow: 0 0.6rem 1.4rem -0.4rem rgb(10 8 11 / 0.55);
+}
+.spruchband--lila {
+  background: var(--lila);
+  color: var(--weiss);
+}
+.spruchband--nacht {
+  background: var(--nacht);
+  color: var(--weiss);
+}
+
+/* Abschnittskopf: Überschrift groß, Text leise darunter */
+.kopf {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: clamp(2rem, 4vw, 3.5rem);
+  max-width: 52rem;
+}
+.kopf p:not(.spruchband) {
+  color: var(--leise);
+  margin: 0;
+  max-width: var(--mass);
+}
+
+/* ------------------------------------------------------------
+   Aktionen
+   ------------------------------------------------------------ */
+.aktion {
+  --a-bg: var(--weiss);
+  --a-fg: var(--lila);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  min-height: 3rem;
+  padding: 0.7rem 1.25rem 0.6rem;
+  border: 2px solid var(--a-bg);
+  background: var(--a-bg);
+  color: var(--a-fg);
+  font-family: var(--display);
+  font-size: 1.15rem;
+  line-height: 1;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.25s var(--ease-out),
+    color 0.25s var(--ease-out),
+    transform 0.25s var(--ease-out);
+}
+.aktion svg {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+}
+.aktion:hover {
+  background: transparent;
+  color: var(--a-bg);
+  transform: translateY(-2px);
+}
+.aktion:active {
+  transform: translateY(0);
+}
+.aktion--hohl {
+  background: transparent;
+  color: var(--a-bg);
+}
+.aktion--hohl:hover {
+  background: var(--a-bg);
+  color: var(--a-fg);
+}
+.kurve--weiss .aktion {
+  --a-bg: var(--lila);
+  --a-fg: var(--weiss);
+}
+
+.mehr {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: var(--display);
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  color: var(--akzent);
+  text-decoration: none;
+}
+.mehr svg {
+  width: 1.1em;
+  height: 1.1em;
+  transition: transform 0.3s var(--ease-out);
+}
+.mehr:hover svg {
+  transform: translateX(4px);
+}
+.mehr:hover {
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------
+   Lesetext (Geschichte, Rechtliches, Aktuelles)
+   ------------------------------------------------------------ */
+.lesetext {
+  max-width: var(--mass);
+  font-size: clamp(1.02rem, 0.98rem + 0.2vw, 1.12rem);
+  line-height: 1.75;
+  hyphens: auto;
+}
+.lesetext p:first-child > em:only-child,
+.lesetext > p:first-of-type em:only-child {
+  font-style: italic;
+}
+.lesetext h2,
+.lesetext h3 {
+  margin: 2.2em 0 0.6em;
+}
+.lesetext img {
+  margin: 2.25rem auto;
+  width: 100%;
+}
+.lesetext p:has(> img) {
+  margin: 0;
+}
+.lesetext a {
+  color: var(--akzent);
+}
+.lesetext ul {
+  padding-left: 1.2em;
+}
+.lesetext li {
+  margin-bottom: 0.4em;
+}
+
+/* Bewegung nur, wenn erwünscht */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 700px) {
+  body {
+    background-attachment: scroll;
+  }
+}

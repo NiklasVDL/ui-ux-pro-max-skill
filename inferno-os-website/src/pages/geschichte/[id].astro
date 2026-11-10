@@ -1,0 +1,87 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Seitenkopf from '../../components/Seitenkopf.astro';
+import Textseite from '../../components/Textseite.astro';
+import VideoEmbed from '../../components/VideoEmbed.astro';
+import Icon from '../../components/Icon.astro';
+import { seiten, trailer } from '../../lib/inhalte';
+
+export async function getStaticPaths() {
+  const liste = (await seiten()).filter((s) => s.data.bereich === 'inferno' || s.data.bereich === 'geschichte');
+  return liste.map((s, i) => ({ params: { id: s.id }, props: { s, vor: liste[i - 1], nach: liste[i + 1] } }));
+}
+const { s, vor, nach } = Astro.props;
+const { Content } = await render(s);
+const video = s.data.video ? (await trailer()).find((t) => t.data.videoId === s.data.video) : undefined;
+const kopfbild = { 'wer-wir-sind': 'block', gruppenlogos: 'zaun', '5-jahre': 'fahnen', '10-jahre': 'choreo', '15-jahre': 'pyro', '20-jahre': 'rauch' }[s.id] ?? 'pyro';
+---
+
+<Base titel={s.data.untertitel ? `${s.data.titel}: ${s.data.untertitel}` : s.data.titel} beschreibung={s.data.teaser || undefined} bild={s.data.bild}>
+  <Seitenkopf titel={s.data.titel} untertitel={s.data.untertitel} bild={kopfbild} />
+  <Textseite bild={kopfbild === 'block' ? 'fahnen' : 'block'}>
+    {s.data.bild && (
+      <figure class="titelbild">
+        <img src={s.data.bild} alt={s.data.bildAlt ?? ''} width="1600" height="1067" />
+      </figure>
+    )}
+    {video && (
+      <div class="titelvideo">
+        <VideoEmbed titel={video.data.titel} anbieter={video.data.anbieter} videoId={video.data.videoId} poster={video.data.poster} dauer={video.data.dauer} />
+      </div>
+    )}
+    <div class:list={['lesetext', { 'lesetext--logos': s.id === 'gruppenlogos', 'lesetext--entwurf': s.data.entwurf }]}>
+      <Content />
+    </div>
+    <nav class="kapitelnav" aria-label="Weitere Kapitel" slot="neben">
+      {vor ? <a class="mehr" href={`/geschichte/${vor.id}/`}><Icon name="arrow-left" /> {vor.data.titel}</a> : <span />}
+      {nach && <a class="mehr" href={`/geschichte/${nach.id}/`}>{nach.data.titel} <Icon name="arrow-right" /></a>}
+    </nav>
+  </Textseite>
+</Base>
+
+<style>
+  .titelbild {
+    margin: 0 0 2.5rem;
+  }
+  .titelbild img {
+    width: 100%;
+  }
+  .titelvideo {
+    margin-bottom: 2.5rem;
+  }
+  .titelvideo :global(.video__hinweis) {
+    color: var(--tinte-2);
+  }
+  .lesetext--logos :global(p:has(> img)) {
+    float: right;
+    width: clamp(7rem, 30%, 13rem);
+    margin: 0.3rem 0 1rem 1.5rem;
+  }
+  .lesetext--logos :global(p:has(> img) img) {
+    margin: 0;
+  }
+  .lesetext--logos::after {
+    content: '';
+    display: block;
+    clear: both;
+  }
+  .lesetext--entwurf {
+    padding: 1.25rem 1.5rem;
+    border: 3px dashed var(--lila-logo);
+  }
+  .kapitelnav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    width: min(100%, 52rem);
+    justify-self: center;
+  }
+  @media (max-width: 560px) {
+    .lesetext--logos :global(p:has(> img)) {
+      float: none;
+      width: 9rem;
+      margin: 1.5rem auto;
+    }
+  }
+</style>

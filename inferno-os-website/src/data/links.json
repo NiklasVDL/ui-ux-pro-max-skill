@@ -1,0 +1,21 @@
+{
+  "gruppen": [
+    {
+      "name": "Osnabrück",
+      "links": [
+        { "name": "Violet Crew", "url": "http://www.violetcrew.de", "logo": "/images/links/linksvc.png" },
+        { "name": "Fanprojekt", "url": "https://fanprojekt-osnabrueck.de/", "logo": "/images/links/linksfp.png" },
+        { "name": "Fanabteilung", "url": "http://www.vfl-fanabteilung.de", "logo": "/images/links/linksfa.png" },
+        { "name": "Mythos Bremer Brücke", "url": "https://www.mythos-bremer-bruecke.de", "logo": "/images/links/linksmbb.png" }
+      ]
+    },
+    {
+      "name": "Sonstige",
+      "links": [
+        { "name": "Pro Fans", "url": "http://www.profans.de", "logo": "/images/links/linkspf.png" },
+        { "name": "Pyrotechnik legalisieren", "url": "http://www.pyrotechnik-legalisieren.de", "logo": "/images/links/linkspl.png" },
+        { "name": "50+1 Bleibt!", "url": "https://50plus1bleibt.de/", "logo": "/images/links/links50plus1.png" }
+      ]
+    }
+  ]
+}

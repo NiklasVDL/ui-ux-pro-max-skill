@@ -1,0 +1,24 @@
+{
+  "heroTitel": "Inferno Osnabrück",
+  "heroSpruch": "Verschwende deine Jugend!",
+  "heroVideo": {
+    "anbieter": "vimeo",
+    "videoId": "277888338",
+    "titel": "INFERNO OSNABRÜCK - Verschwende deine Jugend!"
+  },
+  "heroBild": "/images/kurve/zaun-hero.webp",
+  "saisons": [
+    { "saison": "2026/27", "hinweis": "Die Bilder der laufenden Saison folgen." },
+    { "saison": "2025/26" },
+    { "saison": "2024/25" },
+    { "saison": "2023/24" },
+    { "saison": "2022/23" },
+    { "saison": "2021/22" },
+    { "saison": "2019/20" },
+    { "saison": "2018/19" },
+    { "saison": "2017/18" },
+    { "saison": "2016/17" }
+  ],
+  "email": "info@inferno-os.de",
+  "vorschau": true
+}

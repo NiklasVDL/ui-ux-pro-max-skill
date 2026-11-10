@@ -1,0 +1,225 @@
+# Redaktionssystem (Sveltia CMS) für www.inferno-os.de
+# Doku: https://sveltiacms.app/en/docs
+#
+# Vor dem Livegang anpassen:
+#   backend.repo     -> GitHub-Repository der Website, z. B. "inferno-os/website"
+#   backend.base_url -> Adresse des Login-Dienstes (siehe docs/LIVEGANG.md, Schritt 4)
+
+backend:
+  name: github
+  repo: OWNER/inferno-os-website
+  branch: main
+  # base_url: https://inferno-cms-auth.<konto>.workers.dev
+  commit_messages:
+    create: 'Neu: {{collection}} „{{slug}}“ ({{author-name}})'
+    update: 'Geändert: {{collection}} „{{slug}}“ ({{author-name}})'
+    delete: 'Gelöscht: {{collection}} „{{slug}}“ ({{author-name}})'
+    uploadMedia: 'Bild hochgeladen: {{path}}'
+    deleteMedia: 'Bild gelöscht: {{path}}'
+
+app_title: INFERNO Redaktion
+site_url: https://www.inferno-os.de
+logo:
+  src: /images/logos/gruendungslogo-512.png
+show_preview_links: true
+
+media_folder: public/media/uploads
+public_folder: /media/uploads
+
+media_libraries:
+  default:
+    config:
+      max_file_size: 26214400
+      slugify_filename: true
+      # Jedes hochgeladene Foto wird im Browser auf max. 1600 px verkleinert und als WebP
+      # gespeichert. Ein 5-MB-Kamerafoto wird so zu etwa 150 KB.
+      transformations:
+        raster_image:
+          format: webp
+          quality: 80
+          width: 1600
+          height: 1600
+
+collections:
+  - name: spieltage
+    label: Spieltagsbilder
+    label_singular: Spieltag
+    description: Eine Galerie pro Spieltag. Titel wie bisher, z. B. „19. Spieltag VfL Osnabrück vs. VfB Stuttgart II 1:2“.
+    icon: photo_library
+    folder: src/content/spieltage
+    extension: json
+    format: json
+    create: true
+    delete: true
+    slug: '{{year}}{{month}}{{day}}-{{slug}}'
+    identifier_field: titel
+    summary: '{{saison}} · {{titel}}'
+    sortable_fields: [datum, saison, titel]
+    view_groups:
+      - label: Saison
+        field: saison
+    media_folder: /public/media/uploads/spieltage
+    public_folder: /media/uploads/spieltage
+    thumbnail: bilder
+    fields:
+      - name: titel
+        label: Titel
+        widget: string
+        hint: 'Format: „19. Spieltag VfL Osnabrück vs. VfB Stuttgart II 1:2“'
+      - name: saison
+        label: Saison
+        widget: select
+        default: '2026/27'
+        options: ['2034/35', '2033/34', '2032/33', '2031/32', '2030/31', '2029/30', '2028/29', '2027/28', '2026/27', '2025/26', '2024/25', '2023/24', '2022/23', '2021/22', '2019/20', '2018/19', '2017/18', '2016/17']
+        hint: Neue Saisons erscheinen auf der Seite, sobald sie unter Einstellungen → Saisons eingetragen sind.
+      - name: datum
+        label: Spieltag am
+        widget: datetime
+        type: date
+        required: false
+        hint: Bei neuen Spieltagen immer ausfüllen. Das Datum bestimmt die Reihenfolge (neuester zuerst).
+      - name: bilder
+        label: Bilder
+        widget: image
+        multiple: true
+        min: 1
+        hint: Mehrere Fotos auf einmal hineinziehen. Die Reihenfolge lässt sich per Ziehen ändern.
+      - { name: position, widget: hidden }
+      - { name: quelle, widget: hidden }
+
+  - name: aktuelles
+    label: Aktuelles
+    label_singular: Beitrag
+    description: Statements und Events. Neueste Beiträge erscheinen oben auf der Startseite.
+    icon: campaign
+    folder: src/content/aktuelles
+    extension: md
+    format: frontmatter
+    create: true
+    delete: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    identifier_field: titel
+    summary: '{{typ}} · {{datum | date("DD.MM.YYYY")}} · {{titel}}'
+    sortable_fields: [datum, titel, typ]
+    media_folder: /public/media/uploads/aktuelles
+    public_folder: /media/uploads/aktuelles
+    fields:
+      - { name: titel, label: Titel, widget: string }
+      - { name: typ, label: Art, widget: select, options: [Statement, Event], default: Statement }
+      - { name: datum, label: Veröffentlicht am, widget: datetime, type: date, default: '{{now}}' }
+      - name: termin
+        label: Termin (nur bei Events)
+        widget: datetime
+        format: 'YYYY-MM-DDTHH:mm'
+        required: false
+      - { name: ort, label: Ort (nur bei Events), widget: string, required: false }
+      - { name: bild, label: Bild, widget: image, required: false }
+      - { name: bildAlt, label: Bildbeschreibung, widget: string, required: false, hint: 'Kurz beschreiben, was zu sehen ist (für Screenreader).' }
+      - { name: beispiel, label: Beispiel-Beitrag, widget: boolean, default: false, hint: Nur für die Vorschau. Vor dem Livegang alle Beispiele löschen. }
+      - { name: body, label: Text, widget: markdown }
+
+  - name: seiten
+    label: Seiten & Texte
+    label_singular: Seite
+    description: Feste Texte der Website. Die Texte der alten Seite wurden wortgetreu übernommen.
+    icon: article
+    folder: src/content/seiten
+    extension: md
+    format: frontmatter
+    create: false
+    delete: false
+    identifier_field: titel
+    summary: '{{titel}}'
+    sortable_fields: [reihenfolge, titel]
+    media_folder: /public/media/uploads/seiten
+    public_folder: /media/uploads/seiten
+    fields:
+      - { name: titel, label: Titel, widget: string }
+      - { name: untertitel, label: Untertitel (Spruchband), widget: string, required: false }
+      - { name: teaser, label: Anrisstext für Übersichten, widget: text, required: false }
+      - { name: bild, label: Titelbild, widget: image, required: false }
+      - { name: bildAlt, label: Bildbeschreibung, widget: string, required: false }
+      - { name: video, label: Vimeo-ID eines Videos zur Seite, widget: string, required: false }
+      - { name: jahr, label: Jahr (Zeitleiste), widget: number, required: false, value_type: int }
+      - { name: entwurf, label: Text folgt noch, widget: boolean, default: false, hint: 'Zeigt den Hinweis „Text folgt“ auf Übersichten. Ausschalten, sobald der Text steht.' }
+      - { name: reihenfolge, label: Reihenfolge, widget: number, value_type: int }
+      - { name: bereich, widget: hidden }
+      - { name: body, label: Text, widget: markdown }
+
+  - name: trailer
+    label: Trailer
+    label_singular: Video
+    icon: movie
+    folder: src/content/trailer
+    extension: json
+    format: json
+    create: true
+    delete: true
+    identifier_field: titel
+    sortable_fields: [reihenfolge, titel]
+    media_folder: /public/media/uploads/trailer
+    public_folder: /media/uploads/trailer
+    fields:
+      - { name: titel, label: Titel, widget: string }
+      - { name: anbieter, label: Plattform, widget: select, options: [vimeo, youtube], default: vimeo }
+      - { name: videoId, label: Video-ID, widget: string, hint: 'Vimeo: die Zahl aus vimeo.com/277888338. YouTube: die ID aus youtube.com/watch?v=XXXX.' }
+      - { name: poster, label: Vorschaubild, widget: image }
+      - { name: dauer, label: Dauer (z. B. 3:36), widget: string, required: false }
+      - { name: beschreibung, label: Beschreibung, widget: string, required: false }
+      - { name: reihenfolge, label: Reihenfolge, widget: number, value_type: int, default: 10 }
+
+singletons:
+  - name: einstellungen
+    label: Einstellungen
+    icon: settings
+    file: src/data/einstellungen.json
+    format: json
+    fields:
+      - { name: heroTitel, label: Titel auf der Startseite, widget: string }
+      - { name: heroSpruch, label: Spruch auf der Startseite, widget: string }
+      - name: heroVideo
+        label: Trailer im Hintergrund der Startseite
+        widget: object
+        fields:
+          - name: anbieter
+            label: Quelle
+            widget: select
+            options:
+              - { label: Vimeo, value: vimeo }
+              - { label: YouTube, value: youtube }
+              - { label: Eigene Videodatei (MP4), value: datei }
+            hint: 'Eigene Datei = keine Verbindung zu Vimeo/YouTube. Empfohlen: MP4 (H.264), 720p, unter 25 MB.'
+          - { name: videoId, label: Video-ID (Vimeo/YouTube), widget: string, required: false }
+          - { name: datei, label: Videodatei (nur bei „Eigene Videodatei“), widget: file, required: false, accept: 'video/mp4,video/webm', media_folder: /public/media/uploads/video, public_folder: /media/uploads/video }
+          - { name: titel, label: Titel, widget: string }
+      - { name: heroBild, label: Standbild (solange das Video lädt), widget: image }
+      - name: saisons
+        label: Saisons
+        label_singular: Saison
+        widget: list
+        hint: Reihenfolge wie auf der Seite. Neue Saison oben einfügen.
+        fields:
+          - { name: saison, label: Saison (z. B. 2027/28), widget: string, pattern: ['^\d{4}/\d{2}$', 'Format: 2027/28'] }
+          - { name: hinweis, label: Hinweis, widget: string, required: false, hint: 'Wird gezeigt, solange es noch keine Bilder gibt.' }
+      - { name: email, label: E-Mail-Adresse, widget: string }
+      - { name: vorschau, label: Vorschau-Modus (Suchmaschinen ausschließen), widget: boolean, hint: Vor dem Livegang ausschalten. }
+
+  - name: links
+    label: Links
+    icon: link
+    file: src/data/links.json
+    format: json
+    fields:
+      - name: gruppen
+        label: Gruppen
+        widget: list
+        fields:
+          - { name: name, label: Überschrift, widget: string }
+          - name: links
+            label: Links
+            widget: list
+            summary: '{{fields.name}}'
+            fields:
+              - { name: name, label: Name, widget: string }
+              - { name: url, label: Adresse, widget: string }
+              - { name: logo, label: Logo, widget: image }

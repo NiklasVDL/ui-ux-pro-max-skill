@@ -1,0 +1,188 @@
+---
+import Icon from './Icon.astro';
+---
+
+<dialog class="lightbox" data-lightbox aria-label="Bildansicht">
+  <figure class="lightbox__buehne">
+    <img class="lightbox__bild" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" width="1600" height="1067" data-lb-bild />
+    <figcaption class="lightbox__zeile">
+      <span class="lightbox__titel" data-lb-titel></span>
+      <span class="lightbox__zahl" data-lb-zahl aria-live="polite"></span>
+    </figcaption>
+  </figure>
+  <button class="lightbox__knopf lightbox__zu" type="button" data-lb-zu aria-label="Schließen"><Icon name="x" /></button>
+  <button class="lightbox__knopf lightbox__zurueck" type="button" data-lb-zurueck aria-label="Vorheriges Bild"><Icon name="chevron-left" /></button>
+  <button class="lightbox__knopf lightbox__weiter" type="button" data-lb-weiter aria-label="Nächstes Bild"><Icon name="chevron-right" /></button>
+</dialog>
+
+<style>
+  .lightbox {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: clamp(0.5rem, 3vw, 2.5rem);
+    border: 0;
+    background: rgb(10 8 11 / 0.96) url('/images/kurve/rauch-schwarz.webp') center / cover;
+    color: var(--weiss);
+    overflow: hidden;
+  }
+  .lightbox[open] {
+    display: grid;
+    place-items: center;
+    animation: lb-auf 0.35s var(--ease-out);
+  }
+  .lightbox::backdrop {
+    background: rgb(10 8 11 / 0.85);
+  }
+  @keyframes lb-auf {
+    from {
+      opacity: 0;
+    }
+  }
+  .lightbox__buehne {
+    margin: 0;
+    display: grid;
+    gap: 0.9rem;
+    justify-items: center;
+    max-width: 100%;
+  }
+  .lightbox__bild {
+    max-width: min(100%, 1600px);
+    max-height: calc(100svh - 7rem);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    box-shadow: 0 2rem 4rem -1.5rem rgb(0 0 0 / 0.9);
+    touch-action: pan-y;
+    user-select: none;
+    transition: opacity 0.2s var(--ease-out);
+  }
+  .lightbox__bild.laedt {
+    opacity: 0.35;
+  }
+  .lightbox__zeile {
+    display: flex;
+    gap: 1.25rem;
+    align-items: baseline;
+    justify-content: center;
+    flex-wrap: wrap;
+    text-align: center;
+  }
+  .lightbox__titel {
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: 1.2rem;
+  }
+  .lightbox__zahl {
+    font-variant-numeric: tabular-nums;
+    color: var(--lila-licht);
+    font-size: 0.95rem;
+  }
+  .lightbox__knopf {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border: 2px solid var(--weiss);
+    border-radius: 50%;
+    background: rgb(10 8 11 / 0.55);
+    color: var(--weiss);
+    cursor: pointer;
+    transition:
+      background-color 0.2s var(--ease-out),
+      color 0.2s var(--ease-out);
+  }
+  .lightbox__knopf:hover {
+    background: var(--weiss);
+    color: var(--lila);
+  }
+  .lightbox__knopf :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .lightbox__zu {
+    top: 1rem;
+    right: 1rem;
+  }
+  .lightbox__zurueck,
+  .lightbox__weiter {
+    top: 50%;
+    translate: 0 -50%;
+  }
+  .lightbox__zurueck {
+    left: 1rem;
+  }
+  .lightbox__weiter {
+    right: 1rem;
+  }
+  @media (max-width: 700px) {
+    .lightbox__zurueck,
+    .lightbox__weiter {
+      top: auto;
+      bottom: 1rem;
+      translate: none;
+    }
+  }
+</style>
+
+<script>
+  const box = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+  if (box) {
+    const bild = box.querySelector<HTMLImageElement>('[data-lb-bild]')!;
+    const titel = box.querySelector<HTMLElement>('[data-lb-titel]')!;
+    const zahl = box.querySelector<HTMLElement>('[data-lb-zahl]')!;
+    let liste: HTMLAnchorElement[] = [];
+    let index = 0;
+
+    const vorladen = (i: number) => {
+      const a = liste[(i + liste.length) % liste.length];
+      if (a) new Image().src = a.href;
+    };
+    const zeige = (i: number) => {
+      index = (i + liste.length) % liste.length;
+      const a = liste[index];
+      bild.classList.add('laedt');
+      bild.onload = () => bild.classList.remove('laedt');
+      bild.src = a.href;
+      bild.alt = a.querySelector('img')?.alt ?? '';
+      titel.textContent = a.closest<HTMLElement>('[data-galerie]')?.dataset.galerie ?? '';
+      zahl.textContent = `${index + 1} / ${liste.length}`;
+      vorladen(index + 1);
+      vorladen(index - 1);
+    };
+
+    document.addEventListener('click', (e) => {
+      const ziel = e.target as HTMLElement;
+      const a = ziel.closest<HTMLAnchorElement>('[data-galerie] a[data-bild]');
+      if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      e.preventDefault();
+      liste = [...a.closest('[data-galerie]')!.querySelectorAll<HTMLAnchorElement>('a[data-bild]')];
+      box.showModal();
+      zeige(liste.indexOf(a));
+    });
+
+    box.querySelector('[data-lb-zu]')!.addEventListener('click', () => box.close());
+    box.querySelector('[data-lb-zurueck]')!.addEventListener('click', () => zeige(index - 1));
+    box.querySelector('[data-lb-weiter]')!.addEventListener('click', () => zeige(index + 1));
+    box.addEventListener('click', (e) => {
+      if (e.target === box) box.close();
+    });
+    box.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') zeige(index + 1);
+      if (e.key === 'ArrowLeft') zeige(index - 1);
+    });
+
+    // Wischen auf dem Handy
+    let startX: number | null = null;
+    bild.addEventListener('pointerdown', (e) => (startX = e.clientX));
+    bild.addEventListener('pointerup', (e) => {
+      if (startX === null) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 40) zeige(index + (dx < 0 ? 1 : -1));
+      startX = null;
+    });
+  }
+</script>

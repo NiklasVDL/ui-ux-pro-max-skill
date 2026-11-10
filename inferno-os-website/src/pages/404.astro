@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base titel="Seite nicht gefunden">
+  <section class="kurve kurve--lila bild-rauch nichts">
+    <div class="wrap">
+      <h1>Abseits!</h1>
+      <p class="spruchband">Diese Seite gibt es nicht (mehr).</p>
+      <p><a class="aktion" href="/">Zur Startseite</a></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nichts {
+    min-height: 80svh;
+    display: grid;
+    align-items: center;
+    padding-top: calc(var(--header-h) + 3rem);
+  }
+  .nichts .wrap {
+    display: grid;
+    gap: 1.8rem;
+    justify-items: start;
+  }
+  .nichts h1 {
+    font-size: clamp(4rem, 2rem + 10vw, 9rem);
+  }
+  .nichts .spruchband {
+    font-size: clamp(1.3rem, 1rem + 1.5vw, 2.2rem);
+  }
+</style>

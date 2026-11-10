@@ -1,0 +1,38 @@
+---
+/** Lesetext auf einem weißen Blatt, das vor dem Kurvenbild hängt. */
+interface Props {
+  bild?: string;
+  flaeche?: 'weiss' | 'nacht' | 'lila';
+}
+const { bild = 'block', flaeche = 'weiss' } = Astro.props;
+---
+
+<section class:list={['kurve', `kurve--${flaeche}`, `bild-${bild}`, 'textseite']}>
+  <div class="wrap textseite__wrap">
+    <article class="blatt">
+      <slot />
+    </article>
+    <slot name="neben" />
+  </div>
+</section>
+
+<style>
+  .textseite__wrap {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+  .blatt {
+    --akzent: var(--lila);
+    --leise: var(--tinte-2);
+    justify-self: center;
+    width: min(100%, 52rem);
+    padding: clamp(1.5rem, 5vw, 4rem);
+    background: var(--weiss);
+    color: var(--tinte);
+    box-shadow: 0 2rem 4rem -2rem rgb(10 8 11 / 0.55);
+    color-scheme: light;
+  }
+  .blatt :global(.lesetext) {
+    margin-inline: auto;
+  }
+</style>

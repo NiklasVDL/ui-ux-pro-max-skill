@@ -1,0 +1,35 @@
+# Sicherheits-Header für Cloudflare Pages (gilt für jede Antwort der Website)
+# Erklärung: docs/SICHERHEIT.md
+
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  X-Permitted-Cross-Domain-Policies: none
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self'; frame-src https://player.vimeo.com https://www.youtube-nocookie.com https://challenges.cloudflare.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests
+
+# Redaktionssystem: braucht Verbindungen zu GitHub, die Schriften/Icons der CMS-Oberfläche
+# (jsDelivr) und eigene Inline-Styles.
+# Zusätzlich per Cloudflare Access geschützt (docs/LIVEGANG.md, Schritt 5).
+/admin/*
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'self'; script-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.githubusercontent.com; font-src 'self' data: https://cdn.jsdelivr.net; connect-src 'self' blob: data: https://api.github.com https://*.githubusercontent.com https://www.githubstatus.com https://unpkg.com https://*.workers.dev; frame-src 'self' blob:; worker-src 'self' blob:; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
+  Cache-Control: no-store
+  X-Robots-Tag: noindex, nofollow
+
+# Lange Zwischenspeicherung für Dateien mit Hash im Namen
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: https://www.inferno-os.de
+/_thumbs/*
+  Cache-Control: public, max-age=2592000
+/media/*
+  Cache-Control: public, max-age=2592000
+/images/*
+  Cache-Control: public, max-age=2592000

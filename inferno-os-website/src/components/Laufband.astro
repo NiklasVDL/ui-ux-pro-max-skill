@@ -1,0 +1,97 @@
+---
+import Rad from './Rad.astro';
+
+interface Props {
+  text?: string;
+  variante?: 'weiss' | 'lila' | 'nacht';
+  richtung?: 'links' | 'rechts';
+}
+const { text = 'Verschwende deine Jugend!', variante = 'nacht', richtung = 'links' } = Astro.props;
+const wiederholung = Array.from({ length: 8 });
+---
+
+<div class="laufband-huelle" aria-hidden="true">
+<div class:list={['laufband', `laufband--${variante}`, `laufband--${richtung}`]}>
+  <div class="laufband__spur">
+    {
+      [0, 1].map(() => (
+        <div class="laufband__satz">
+          {wiederholung.map(() => (
+            <>
+              <span>{text}</span>
+              <Rad class="laufband__rad" />
+            </>
+          ))}
+        </div>
+      ))
+    }
+  </div>
+</div>
+</div>
+
+<style>
+  .laufband-huelle {
+    position: relative;
+    z-index: 3;
+    overflow-x: clip;
+    margin-block: -1.4rem;
+  }
+  .laufband {
+    --bg: var(--nacht);
+    --fg: var(--weiss);
+    position: relative;
+    z-index: 3;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--fg);
+    padding-block: 0.7rem 0.55rem;
+    transform: rotate(-1.6deg) scale(1.04);
+    box-shadow: 0 0.8rem 2rem -0.8rem rgb(0 0 0 / 0.6);
+  }
+  .laufband--rechts {
+    transform: rotate(1.4deg) scale(1.04);
+  }
+  .laufband--rechts .laufband__spur {
+    animation-direction: reverse;
+  }
+  .laufband--weiss {
+    --bg: var(--weiss);
+    --fg: var(--lila);
+  }
+  .laufband--lila {
+    --bg: var(--lila);
+    --fg: var(--weiss);
+  }
+  .laufband__spur {
+    display: flex;
+    width: max-content;
+    animation: lauf 48s linear infinite;
+  }
+  .laufband__satz {
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
+    padding-right: 1.6rem;
+    font-family: var(--display);
+    text-transform: uppercase;
+    font-size: clamp(1.4rem, 1rem + 1.6vw, 2.4rem);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .laufband__rad {
+    width: 1.1em;
+    height: 1.1em;
+    flex: none;
+    --rad-loch: var(--bg);
+  }
+  @keyframes lauf {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .laufband__spur {
+      animation: none;
+    }
+  }
+</style>
