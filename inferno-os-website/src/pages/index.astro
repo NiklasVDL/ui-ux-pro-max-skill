@@ -820,6 +820,7 @@ const trailerSrc = heroDatei
     box-shadow: 0 1.4rem 2.6rem -1rem rgb(0 0 0 / 0.8);
   }
   .aufkleber span {
+    white-space: nowrap;
     padding: 0.15rem 0.55rem 0.05rem;
     background: var(--lila);
     color: var(--weiss);
@@ -851,6 +852,34 @@ const trailerSrc = heroDatei
   .aufkleber li:hover {
     transform: rotate(0deg) scale(1.04);
     z-index: 4;
+  }
+  /* Schmal: Aufkleber nebeneinander statt übereinander, kein Schild unter einem anderen Aufkleber */
+  @media (max-width: 900px) {
+    .aufkleber {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem 1.5rem;
+      align-items: end;
+      min-height: 0;
+    }
+    .aufkleber li {
+      position: static;
+      width: auto;
+    }
+    .aufkleber__eins {
+      grid-column: 1 / -1;
+      justify-self: center;
+      width: min(70%, 16rem) !important;
+    }
+    .aufkleber__zwei img {
+      max-width: 12rem;
+    }
+    .aufkleber__drei img {
+      max-width: 9rem;
+    }
+    .aufkleber span {
+      font-size: 0.8rem;
+    }
   }
 
   /* ---------- Geschichte ---------- */
