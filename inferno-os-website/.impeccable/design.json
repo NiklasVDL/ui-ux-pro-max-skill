@@ -1,0 +1,380 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-11T00:04:06.686Z",
+  "title": "Design System: INFERNO Osnabrück",
+  "extensions": {
+    "colorMeta": {
+      "lila": {
+        "role": "primary",
+        "displayName": "Kurvenlila",
+        "canonical": "#5c1d68",
+        "tonalRamp": [
+          "#230d28",
+          "#36123e",
+          "#4a1854",
+          "#5c1d68",
+          "#82518b",
+          "#a885af",
+          "#cbb5cf",
+          "#eae0ec"
+        ]
+      },
+      "lila-tief": {
+        "role": "primary",
+        "displayName": "Rauchlila",
+        "canonical": "#2a0a35",
+        "tonalRamp": [
+          "#140718",
+          "#1b0822",
+          "#23092c",
+          "#2a0a35",
+          "#5c4365",
+          "#8e7b94",
+          "#bcafc0",
+          "#e5dee7"
+        ]
+      },
+      "lila-logo": {
+        "role": "secondary",
+        "displayName": "Logolila",
+        "canonical": "#883893",
+        "tonalRamp": [
+          "#301535",
+          "#4e2155",
+          "#6c2d75",
+          "#883893",
+          "#a366ac",
+          "#bf93c5",
+          "#d8bddc",
+          "#efe3f1"
+        ]
+      },
+      "lila-licht": {
+        "role": "secondary",
+        "displayName": "Flutlichtlila",
+        "canonical": "#d7b4e3",
+        "tonalRamp": [
+          "#483a4d",
+          "#796480",
+          "#aa8eb4",
+          "#d7b4e3",
+          "#dfc4e9",
+          "#e8d4ef",
+          "#f0e2f4",
+          "#f7eff9"
+        ]
+      },
+      "nacht": {
+        "role": "neutral",
+        "displayName": "Nacht",
+        "canonical": "#0a080b",
+        "tonalRamp": [
+          "#0a070c",
+          "#0a070b",
+          "#0a080b",
+          "#0a080b",
+          "#444145",
+          "#7d7a7e",
+          "#b2afb3",
+          "#e2dee3"
+        ]
+      },
+      "weiss": {
+        "role": "neutral",
+        "displayName": "Tuchweiß",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#545155",
+          "#8e8c8f",
+          "#c9c8ca",
+          "#ffffff",
+          "#fefdfe",
+          "#fdfbfd",
+          "#fcf9fc",
+          "#fbf7fb"
+        ]
+      },
+      "nebel": {
+        "role": "neutral",
+        "displayName": "Nebel",
+        "canonical": "#f6f1f8",
+        "tonalRamp": [
+          "#514d53",
+          "#89858b",
+          "#c2bdc4",
+          "#f6f1f8",
+          "#f7f2f9",
+          "#f8f3f9",
+          "#f9f5fa",
+          "#faf6fb"
+        ]
+      },
+      "tinte": {
+        "role": "neutral",
+        "displayName": "Tinte",
+        "canonical": "#170d1a",
+        "tonalRamp": [
+          "#0e0810",
+          "#110a14",
+          "#140b17",
+          "#170d1a",
+          "#4d4550",
+          "#847d86",
+          "#b6b0b8",
+          "#e3dfe4"
+        ]
+      },
+      "tinte-2": {
+        "role": "neutral",
+        "displayName": "Tinte leise",
+        "canonical": "#4a3a50",
+        "tonalRamp": [
+          "#1d1620",
+          "#2d2231",
+          "#3c2f41",
+          "#4a3a50",
+          "#746779",
+          "#9e94a2",
+          "#c5bec8",
+          "#e8e3ea"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display-hero": {
+        "displayName": "Display Hero",
+        "purpose": "Nur der Name „INFERNO / OSNABRÜCK“ im ersten Bildschirm."
+      },
+      "display": {
+        "displayName": "Display",
+        "purpose": "h1 und Seitenköpfe."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "h2, Abschnittstitel jeder Fläche."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "h3: Beitragstitel, Gruppen, Stationen."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Aktionen, Menüpunkte, Mehr-Links, Feldbeschriftungen in Versalien."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Fließtext und Abschnitts-Unterzeilen in Arial."
+      },
+      "body-lesetext": {
+        "displayName": "Lesetext",
+        "purpose": "Geschichte, Rechtliches, Beiträge; max. 68ch, Silbentrennung."
+      }
+    },
+    "duotones": [
+      {
+        "flaeche": "lila",
+        "schatten": "#2a0a35",
+        "lichter": "#5c1d68"
+      },
+      {
+        "flaeche": "nacht",
+        "schatten": "#040305",
+        "lichter": "#2a1630"
+      },
+      {
+        "flaeche": "weiss",
+        "schatten": "#e4d9ea",
+        "lichter": "#ffffff"
+      },
+      {
+        "flaeche": "hero",
+        "schatten": "#14051c",
+        "lichter": "#c99bdb"
+      }
+    ],
+    "shadows": [
+      {
+        "name": "tuch",
+        "value": "0 0.6rem 1.4rem -0.4rem rgb(10 8 11 / 0.55)",
+        "purpose": "Spruchband."
+      },
+      {
+        "name": "band",
+        "value": "0 0.8rem 2rem -0.8rem rgb(0 0 0 / 0.6)",
+        "purpose": "Laufband."
+      },
+      {
+        "name": "blatt",
+        "value": "0 2rem 4rem -2rem rgb(10 8 11 / 0.55)",
+        "purpose": "Lese-Blatt, Kontaktformular."
+      },
+      {
+        "name": "medium",
+        "value": "0 1.5rem 3rem -1.2rem rgb(0 0 0 / 0.75)",
+        "purpose": "Videos, Untermenü, Aufkleber, Lightbox-Bild."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Einzige Kurve für alle Übergänge und Einläufe."
+      },
+      {
+        "name": "aktion",
+        "value": "0.25s",
+        "purpose": "Farbwechsel und 2px Anheben der Aktionen."
+      },
+      {
+        "name": "laufband",
+        "value": "48s linear infinite",
+        "purpose": "Durchlauf des Laufbands; steht bei reduzierter Bewegung still."
+      },
+      {
+        "name": "aus-dem-rauch",
+        "value": "blur(14px) zu scharf, Laufweite 0.06em zu -0.01em",
+        "purpose": "Einlauf des Hero-Titels."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "schmal",
+        "value": "640px"
+      },
+      {
+        "name": "mobil",
+        "value": "700px"
+      },
+      {
+        "name": "fuss",
+        "value": "760px"
+      },
+      {
+        "name": "mittel",
+        "value": "900px"
+      },
+      {
+        "name": "menue",
+        "value": "1080px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Aktion",
+      "kind": "button",
+      "refersTo": "aktion",
+      "description": "Primäre Aktion: weißes Feld, lila Display-Versalien; im Hover hohl.",
+      "html": "<button class=\"ds-aktion\">Spieltagsbilder</button>",
+      "css": ".ds-aktion { display: inline-flex; align-items: center; gap: 0.6em; min-height: 3rem; padding: 0.7rem 1.25rem 0.6rem; border: 2px solid var(--weiss, #fff); border-radius: 0; background: var(--weiss, #fff); color: var(--lila, #5c1d68); font-family: var(--display, 'Rubik Distressed', 'Arial Black', sans-serif); font-size: 1.15rem; line-height: 1; text-transform: uppercase; cursor: pointer; transition: background-color 0.25s cubic-bezier(0.16,1,0.3,1), color 0.25s cubic-bezier(0.16,1,0.3,1), transform 0.25s cubic-bezier(0.16,1,0.3,1); } .ds-aktion:hover { background: transparent; color: var(--weiss, #fff); transform: translateY(-2px); } .ds-aktion:active { transform: translateY(0); } .ds-aktion:focus-visible { outline: 3px solid var(--lila-licht, #d7b4e3); outline-offset: 3px; }"
+    },
+    {
+      "name": "Aktion hohl",
+      "kind": "button",
+      "refersTo": "aktion-hohl",
+      "description": "Zweite Aktion: nur Rand; im Hover gefüllt.",
+      "html": "<button class=\"ds-aktion-hohl\">Trailer mit Ton</button>",
+      "css": ".ds-aktion-hohl { display: inline-flex; align-items: center; min-height: 3rem; padding: 0.7rem 1.25rem 0.6rem; border: 2px solid var(--weiss, #fff); border-radius: 0; background: transparent; color: var(--weiss, #fff); font-family: var(--display, 'Rubik Distressed', 'Arial Black', sans-serif); font-size: 1.15rem; line-height: 1; text-transform: uppercase; cursor: pointer; transition: background-color 0.25s cubic-bezier(0.16,1,0.3,1), color 0.25s cubic-bezier(0.16,1,0.3,1), transform 0.25s cubic-bezier(0.16,1,0.3,1); } .ds-aktion-hohl:hover { background: var(--weiss, #fff); color: var(--lila, #5c1d68); transform: translateY(-2px); } .ds-aktion-hohl:focus-visible { outline: 3px solid var(--lila-licht, #d7b4e3); outline-offset: 3px; }"
+    },
+    {
+      "name": "Spruchband",
+      "kind": "custom",
+      "refersTo": "spruchband",
+      "description": "Weißes Tuch, lila gemalte Schrift, schräg gehängt.",
+      "html": "<p class=\"ds-spruchband\">Verschwende deine Jugend!</p>",
+      "css": ".ds-spruchband { display: inline-block; margin: 0; padding: 0.18em 0.55em 0.12em; background: var(--weiss, #fff); color: var(--lila, #5c1d68); font-family: var(--display, 'Rubik Distressed', 'Arial Black', sans-serif); font-size: 2rem; text-transform: uppercase; line-height: 1; transform: rotate(-2.2deg); box-shadow: 0 0.6rem 1.4rem -0.4rem rgb(10 8 11 / 0.55); }"
+    },
+    {
+      "name": "Laufband",
+      "kind": "custom",
+      "refersTo": "spruchband-nacht",
+      "description": "Schräges Band mit durchlaufendem Motto über der Kante zweier Flächen.",
+      "html": "<div class=\"ds-laufband\"><div class=\"ds-laufband__spur\"><span>Verschwende deine Jugend!</span><span>●</span><span>Verschwende deine Jugend!</span><span>●</span><span>Verschwende deine Jugend!</span><span>●</span><span>Verschwende deine Jugend!</span></div></div>",
+      "css": ".ds-laufband { overflow: hidden; background: var(--nacht, #0a080b); color: var(--weiss, #fff); padding-block: 0.7rem 0.55rem; transform: rotate(-1.6deg) scale(1.04); box-shadow: 0 0.8rem 2rem -0.8rem rgb(0 0 0 / 0.6); } .ds-laufband__spur { display: flex; gap: 1.6rem; width: max-content; font-family: var(--display, 'Rubik Distressed', 'Arial Black', sans-serif); font-size: 1.8rem; line-height: 1; text-transform: uppercase; white-space: nowrap; animation: ds-lauf 48s linear infinite; } @keyframes ds-lauf { to { transform: translateX(-50%); } } @media (prefers-reduced-motion: reduce) { .ds-laufband__spur { animation: none; } }"
+    },
+    {
+      "name": "Kopfleiste",
+      "kind": "nav",
+      "refersTo": "kopfleiste",
+      "description": "Feste Leiste in Nacht mit Blur, Display-Menüpunkte, Logolila-Unterkante.",
+      "html": "<nav class=\"ds-kopfleiste\"><span class=\"ds-kopfleiste__marke\">Inferno</span><ul><li><a href=\"#\" aria-current=\"page\">Aktuelles</a></li><li><a href=\"#\">Spieltagsbilder</a></li><li><a href=\"#\">Geschichte</a></li></ul></nav>",
+      "css": ".ds-kopfleiste { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; height: 4.25rem; padding-inline: 1.5rem; background: rgb(10 8 11 / 0.82); backdrop-filter: blur(14px) saturate(1.3); border-bottom: 1px solid rgb(136 56 147 / 0.55); color: var(--weiss, #fff); } .ds-kopfleiste__marke { font-family: var(--display, 'Rubik Distressed', 'Arial Black', sans-serif); text-transform: uppercase; font-size: 1.35rem; } .ds-kopfleiste ul { display: flex; gap: 1.25rem; list-style: none; margin: 0; padding: 0; } .ds-kopfleiste a { font-family: var(--display, 'Rubik Distressed', 'Arial Black', sans-serif); text-transform: uppercase; font-size: 1.2rem; color: var(--weiss, #fff); text-decoration: none; padding: 0.5rem 0.35rem; transition: color 0.2s cubic-bezier(0.16,1,0.3,1); } .ds-kopfleiste a:hover, .ds-kopfleiste a[aria-current='page'] { color: var(--lila-licht, #d7b4e3); } .ds-kopfleiste a[aria-current='page'] { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 0.35em; } .ds-kopfleiste a:focus-visible { outline: 3px solid var(--lila-licht, #d7b4e3); outline-offset: 3px; }"
+    },
+    {
+      "name": "Feld",
+      "kind": "input",
+      "refersTo": "feld",
+      "description": "Eckiges Formularfeld auf Nebel, Label in Display-Versalien.",
+      "html": "<label class=\"ds-feld\"><span>Name</span><input type=\"text\" placeholder=\"\" /></label>",
+      "css": ".ds-feld { display: grid; gap: 0.35rem; } .ds-feld span { font-family: var(--display, 'Rubik Distressed', 'Arial Black', sans-serif); text-transform: uppercase; font-size: 1.1rem; color: var(--lila, #5c1d68); } .ds-feld input { width: 100%; padding: 0.75rem 0.85rem; border: 2px solid #cbb8d3; border-radius: 0; background: var(--nebel, #f6f1f8); color: var(--tinte, #170d1a); font: inherit; caret-color: var(--lila, #5c1d68); transition: border-color 0.2s cubic-bezier(0.16,1,0.3,1), background-color 0.2s cubic-bezier(0.16,1,0.3,1); } .ds-feld input:hover { border-color: var(--lila-logo, #883893); } .ds-feld input:focus-visible { outline: none; border-color: var(--lila, #5c1d68); background: var(--weiss, #fff); box-shadow: 0 0 0 3px rgb(136 56 147 / 0.25); }"
+    },
+    {
+      "name": "Saisonkachel",
+      "kind": "card",
+      "description": "Graues Spieltagsfoto unter Rauchlila-Verlauf; Farbe kehrt im Hover zurück.",
+      "html": "<a class=\"ds-saison\" href=\"#\"><span class=\"ds-saison__name\">2025/26</span><span class=\"ds-saison__zahl\">32 Galerien · 210 Bilder</span></a>",
+      "css": ".ds-saison { position: relative; display: grid; align-content: end; min-height: 12rem; padding: 1rem 1.1rem 0.9rem; background: linear-gradient(to top, rgb(42 10 53 / 0.95), rgb(92 29 104 / 0.55)), var(--lila-tief, #2a0a35); color: var(--weiss, #fff); text-decoration: none; transition: background-color 0.6s cubic-bezier(0.16,1,0.3,1); } .ds-saison:hover { background-color: var(--lila, #5c1d68); } .ds-saison:focus-visible { outline: 3px solid var(--lila-licht, #d7b4e3); outline-offset: 3px; } .ds-saison__name { font-family: var(--display, 'Rubik Distressed', 'Arial Black', sans-serif); font-size: 3.4rem; line-height: 0.9; } .ds-saison__zahl { font-size: 0.9rem; color: #ecdcf2; }"
+    },
+    {
+      "name": "Mehr-Link",
+      "kind": "custom",
+      "description": "Display-Link in Akzentfarbe mit Pfeil, der im Hover vorrückt.",
+      "html": "<a class=\"ds-mehr\" href=\"#\">Alle Beiträge <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a>",
+      "css": ".ds-mehr { display: inline-flex; align-items: center; gap: 0.4em; font-family: var(--display, 'Rubik Distressed', 'Arial Black', sans-serif); text-transform: uppercase; font-size: 1.1rem; color: var(--lila-licht, #d7b4e3); text-decoration: none; } .ds-mehr svg { width: 1.1em; height: 1.1em; transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); } .ds-mehr:hover { text-decoration: underline; } .ds-mehr:hover svg { transform: translateX(4px); } .ds-mehr:focus-visible { outline: 3px solid var(--lila-licht, #d7b4e3); outline-offset: 3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Die Ostkurve bei Flutlicht",
+    "overview": "Die Seite ist der Block unter lila Rauch. Jede Fläche ist ein Kurvenfoto, in die Farbe der Fläche getont (Duotone); darüber liegt feines Korn wie Flutlicht auf Rauch. Schrift ist gemalt wie auf Zaunfahne und Spruchband: eine zerkratzte Display-Schrift in Versalien, die laut und groß steht, und darunter ruhiges Arial für alles, was gelesen werden will.\n\nDie Dichte ist die einer Kurve am Spieltag: große Bilder, große Wörter, wenig Kleinkram. Flächen wechseln in harten Bahnen zwischen Lila, Nacht und Weiß; zwischen ihnen laufen schräg gehängte Bänder durch. Nichts ist abgerundet, außer was wirklich rund ist (Logos, das Osnabrücker Rad, runde Bedienknöpfe). Verweigert wird das Vereinsseiten-Template: weiße Seite, Logo links, News-Kacheln im Raster.\n\nBewegung ist Einlauf, nicht Dekoration: der Titel tritt aus dem Rauch (Unschärfe zu scharf), das Spruchband schwingt ein, die Menüleiste fährt beim Verlassen des Trailers herein, das Laufband zieht langsam durch. Alle Bewegung verwendet eine einzige weiche Ausklang-Kurve und entfällt bei `prefers-reduced-motion`.",
+    "keyCharacteristics": [
+      "Drei Grundflächen (Lila, Nacht, Weiß), jede immer mit eigenem Duotone-Kurvenbild und Korn.",
+      "Display-Schrift „Damaged Goods“ in Versalien für Überschriften, Menü, Aktionen; Arial für Fließtext.",
+      "Schräg gehängte Spruchbänder und Laufbänder als Signatur.",
+      "Das Osnabrücker Rad als Trenner und Marke.",
+      "Eckig überall; rund nur, was rund ist.",
+      "Weiche, tief fallende Schatten; keine harten Versatzschatten."
+    ],
+    "rules": [
+      {
+        "name": "The Kurvenbild Rule",
+        "body": "Keine Fläche ist schlicht. Jede `kurve`-Fläche trägt ein Kurvenfoto als Duotone, dessen Lichter die Flächenfarbe sind, und darüber Korn (`korn.png`, 180px, 16 % Deckkraft, overlay). Auch das Lese-Blatt ist ein weiß getöntes Kurvenbild (`blatt-weiss.webp`). Neue Motive entstehen nur über `scripts/make-curves.mjs`, nie als Farbfilter im CSS.",
+        "section": "colors"
+      },
+      {
+        "name": "The Drei-Farben Rule",
+        "body": "Lila, Weiß, Schwarz sind festgelegt. Alle anderen Töne sind Abstufungen von Lila; ein fremder Farbton erscheint nur als Fehlerzustand eines Formularfelds.",
+        "section": "colors"
+      },
+      {
+        "name": "The Versalien Rule",
+        "body": "Die Display-Schrift steht immer in Versalien und immer im Gewicht 400; Gewicht kommt aus der Größe, nicht aus Bold.",
+        "section": "typography"
+      },
+      {
+        "name": "The Arbeitsteilung Rule",
+        "body": "Display für alles, was gerufen wird (Titel, Menü, Aktionen, Bänder, Jahreszahlen); Arial für alles, was gelesen wird. Kein Absatz in Display, kein Titel in Arial.",
+        "section": "typography"
+      },
+      {
+        "name": "The Gehängt Rule",
+        "body": "Was einen Schatten trägt, hängt vor der Kurve (Tuch, Band, Blatt, Aufkleber). Bedienelemente heben sich durch Farbwechsel und 2px Versatz, nicht durch Schatten.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** jede neue Fläche als `kurve kurve--{lila|nacht|weiss} bild-{motiv}` bauen, damit Kurvenbild, Korn und Farbrollen mitkommen.",
+      "**Do** Farben über die Flächenrollen `--vorder`, `--leise`, `--akzent` setzen, damit eine Komponente auf allen drei Flächen stimmt.",
+      "**Do** neue Hintergrundmotive mit `scripts/make-curves.mjs` tönen (Lila #2a0a35 nach #5c1d68, Nacht #040305 nach #2a1630, Weiß #e4d9ea nach #ffffff).",
+      "**Do** Motto und Untertitel als schräg gehängtes Spruchband setzen.",
+      "**Do** alle Übergänge mit `--ease-out` (cubic-bezier(0.16, 1, 0.3, 1)) führen und bei reduzierter Bewegung abschalten."
+    ],
+    "donts": [
+      "**Don't** schlichte Hintergründe verwenden: keine Fläche und kein Textblock ohne Kurvenbild.",
+      "**Don't** das Vereinsseiten-Template bauen: weiße Seite, Logo links, News-Kacheln im Raster.",
+      "**Don't** Farben außerhalb von Lila, Weiß, Schwarz und ihren Lila-Abstufungen einführen.",
+      "**Don't** Rechtecke abrunden; rund ist nur, was rund ist (Logo, Rad, Startknopf, Lightbox-Knöpfe).",
+      "**Don't** die Display-Schrift fett, kursiv oder in Kleinbuchstaben setzen, und keinen Fließtext in ihr.",
+      "**Don't** harte Versatzschatten verwenden; Schatten sind weich und nur an gehängten Elementen."
+    ]
+  }
+}
